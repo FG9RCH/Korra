@@ -1,0 +1,68 @@
+
+<div class="container">
+    <h1>Add Campaign</h1>
+    <div class="row">
+        <form enctype="multipart/form-data" name="addCampaignForm" ng-submit="addCampaign(file)" novalidate>
+
+            <div class="col s9">
+                <div class="">
+                    <div>
+                        <label for="title">Title</label>
+                        <input name="title" class="form-control" type="text" id="title"
+                               ng-model="formData.title" ng-required="required">
+                    </div>
+                    <div>
+                        <label for="description">Description</label>
+                        <textarea name="description" class="materialize-textarea" type="text" id="description"
+                                  ng-model="formData.description" ng-required="required"></textarea>
+                    </div>
+                    <div>
+                        <label for="raised">Goal</label>
+                        <input name="raised" class="form-control" type="text" id="raised"
+                               ng-model="formData.raised" ng-required="formData.raised">
+                    </div>
+                    <div class="file-field input-field col s6 valign-wrapper">
+                        <div class="btn addSubmit" ng-files="getTheFiles($files)" ngf-select ng-model="file" name="file" ngf-pattern="'image/*'"
+                             ngf-accept="'image/*'" ngf-max-size="20MB" >file
+                        </div>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <span class="addImgText">Image Preview:</span>
+                    </div>
+                    <div class="file-path-wrapper col s6">
+                        <img ngf-thumbnail="file || 'http://placehold.it/250x200'">
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+            <div class="col s3">
+                <ul>
+                    <div class="card-panel hoverable">
+                        <div class="" >
+                            <span class="valign">Created on : {{ campaigns.createdAt }}</span>
+                            <br>
+                            <span class="valign">Updated on : {{ campaigns.updatedAt }}</span>
+                            <div class="valign center-align" >
+                                <md-button type="submit" class="md-raised md-warn white-text left-align waves-ripple md-button md-ink-ripple" ng-click="deleteCampaign(campaign._id)"><span class="acbtns">Delete</span></md-button>
+                            </div>
+                            </div>
+                            <br>
+                            <div class="" >
+                                <div class="valign center-align">
+                                    <md-button type="submit" class="md-raised md-primary  white-text left-align waves-ripple md-button md-ink-ripple"><span class="acbtns">Submit</span></md-button>
+                                </div>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </form>
+    </div>
+</div>
+

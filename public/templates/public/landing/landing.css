@@ -1,0 +1,73 @@
+a.md-facebook.md-raised.md-button {
+    background-color: #3b5998;
+    color: #fff;
+}
+
+.md-facebook:hover {
+    background-color: #3b5998;!important;
+}
+
+.md-facebook.md-button.md-raised:not([disabled]):hover {
+    background-color: #3b5998;!important;
+}
+
+a.md-facebook.md-raised.md-button svg{
+    margin-top: 7px;
+}
+
+a.md-twitter.md-raised.md-button {
+    background-color: #1da1f2;
+    color: #fff;
+}
+.md-twitter:hover {
+    background-color: #1da1f2;!important;
+}
+
+.md-twitter.md-button.md-raised:not([disabled]):hover {
+    background-color: #1da1f2;!important;
+}
+
+a.md-twitter.md-raised.md-button svg{
+    margin-top: 7px;
+}
+
+a.md-google.md-raised.md-button {
+    background-color: #e62219;
+    color: #fff;
+}
+.md-google:hover {
+    background-color: #e62219;!important;
+}
+
+.md-google.md-button.md-raised:not([disabled]):hover {
+    background-color: #e62219;!important;
+}
+
+a.md-google.md-raised.md-button svg{
+    margin-top: 7px;
+}
+a.md-login.md-raised.md-button {
+    background-color: #515151;
+    color: #fff;
+}
+.md-login:hover {
+    background-color: #515151;!important;
+}
+
+.md-login.md-button.md-raised:not([disabled]):hover {
+    background-color: #515151;!important;
+}
+
+a.md-login.md-raised.md-button svg{
+    margin-top: 7px;
+}
+
+a.md-primary.md-raised.md-button svg{
+    margin-top: 7px;
+}
+
+span.loginButton {
+    margin-right: 10px;
+    font-size: 14px;
+    font-family: 'Bree Serif', serif;
+}

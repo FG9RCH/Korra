@@ -1,0 +1,28 @@
+
+<div class="section container " style="margin-top: 25px;">
+    <md-button class="md-raised md-primary white-text left-align waves-ripple" ui-sref="admin.addcampaigns"><span>Add Campaign</span></md-button>
+
+
+    <table class="highlight responsive-table">
+        <thead>
+        <tr>
+            <th data-field="title">Title</th>
+            <th data-field="description">Description</th>
+            <th data-field="raised">Goal</th>
+            <th data-field="delete">Delete</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr ng-repeat="campaign in campaigns" >
+             <td> <a ui-sref="admin.editcampaigns({id: campaign._id})">{{campaign.title}}</a></td>
+            <td>{{campaign.description + '...' | limitTo:32; }}</td>
+            <td>${{campaign.raised}}</td>
+            <td class="col s1"><md-button class="md-raised md-primary waves-effect waves-light btn-small" ng-click="deleteCampaign(campaign._id)"><i class="material-icons lcsni">delete</i></md-button></td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+

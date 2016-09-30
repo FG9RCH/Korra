@@ -1,0 +1,32 @@
+body {
+    overflow: hidden;
+    background-color: #EEEEEE;
+}
+
+md-whiteframe {
+    background: #fff;
+}
+
+#content {
+    padding: 24px;
+    overflow: scroll;
+}
+.md-toolbar-tools.hdr-container {
+    padding-left: 24px;
+    padding-right: 42px;
+    color: white;
+}
+md-toolbar:not(.md-menu-toolbar) md-icon {
+    color: rgba(255, 255, 255, 0.87);
+}
+
+span.hdrMenu {
+    position: absolute;
+    top: 12px;
+    left: 43px;
+}
+
+.snbg {
+    background-image: url("uploads/b6d9ef5adadbe7ef29a50a5deabe29a3.jpg");
+}
+

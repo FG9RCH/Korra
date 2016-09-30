@@ -1,0 +1,85 @@
+<!--
+<div class="col-sm-6 col-sm-offset-3">
+
+	<h1><span class="fa fa-sign-in"></span> Login</h1>
+
+	<div growl></div>
+
+	&lt;!&ndash; LOGIN FORM &ndash;&gt;
+	<form ng-submit="login()" ng-controller="LoginForm">
+		<div class="form-group">
+			<label>Email</label>
+			<input type="text" class="form-control" ng-model="email">
+		</div>
+		<div class="form-group">
+			<label>Password</label>
+			<input type="password" class="form-control" ng-model="password">
+		</div>
+
+		<button type="submit" class="btn btn-warning btn-lg">Login</button>
+	</form>
+
+	<hr>
+
+	<p>Need an account? <a href="/signup">Signup</a></p>
+	<p>Or go <a href="/">home</a>.</p>
+
+	<div class="text-center">
+		<p>Angular conversion by <a href="http://brandonmcquarie.com/">Brandon</a> and <a href="http://chrisheninger.com/">Chris</a>. Visit the <a href="https://github.com/brandonmcquarie/easy-node-authentication-angular">Github Repo</a>.</p>
+		<p>Original Node/Express demo by <a href="http://scotch.io">Scotch</a>. Visit the <a href="http://scotch.io/tutorials/javascript/easy-node-authentication-setup-and-local">tutorial</a>.</p>
+	</div>
+	
+</div>-->
+<!-- Pen Title-->
+
+<div class="container">
+	<div class="card"></div>
+	<div class="card">
+		<h1 class="title">Login</h1>
+		<form ng-submit="login()">
+			<md-input-container>
+				<input type="text" id="Username" ng-model="email" required="required"/>
+				<label for="Username">Username</label>
+				<div class="bar"></div>
+			</md-input-container>
+			<md-input-container>
+				<input type="password" id="Password" ng-model="password" required="required"/>
+				<label for="Password">Password</label>
+				<div class="bar"></div>
+			</md-input-container>
+			<div class="button-container">
+				<a href="/auth/facebook" class="md-facebook md-raised md-button"><ng-md-icon icon="facebook" style="fill:white;vertical-align: -webkit-baseline-middle;" size="30" options='{"rotation": "counterclock"}'></ng-md-icon><span class="loginButton">facebook</span></a>
+			</div>
+			<div class="button-container">
+				<button><span>Go</span></button>
+			</div>
+			<div class="footer"><a href="#">Forgot your password?</a></div>
+		</form>
+	</div>
+	<div class="card alt">
+		<div class="toggle material-icons"></div>
+		<h1 class="title">Register
+			<div class="close"></div>
+		</h1>
+		<form>
+			<div class="input-container">
+				<input type="text" id="Username" required="required"/>
+				<label for="Username">Username</label>
+				<div class="bar"></div>
+			</div>
+			<div class="input-container">
+				<input type="password" id="Password" required="required"/>
+				<label for="Password">Password</label>
+				<div class="bar"></div>
+			</div>
+			<div class="input-container">
+				<input type="password" id="Repeat Password" required="required"/>
+				<label for="Repeat Password">Repeat Password</label>
+				<div class="bar"></div>
+			</div>
+			<div class="button-container">
+				<button><span>Next</span></button>
+			</div>
+		</form>
+	</div>
+</div>

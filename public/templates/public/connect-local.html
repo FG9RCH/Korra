@@ -1,0 +1,30 @@
+<div class="col-sm-6 col-sm-offset-3">
+
+	<h1><span class="fa fa-user"></span> Add Local Account</h1>
+
+	<div growl></div>
+
+	<!-- LOGIN FORM -->
+	<form ng-controller="LoginForm" ng-submit="connect()">
+		<div class="form-group">
+			<label>Email</label>
+			<input type="text" class="form-control" ng-model="email">
+		</div>
+		<div class="form-group">
+			<label>Password</label>
+			<input type="password" class="form-control" ng-model="password">
+		</div>
+
+		<button type="submit" class="btn btn-warning btn-lg">Add Local</button>
+	</form>
+
+	<hr>
+
+	<p><a href="/profile">Go back to profile</a></p>
+
+	<div class="text-center">
+		<p>Angular conversion by <a href="http://brandonmcquarie.com/">Brandon</a> and <a href="http://chrisheninger.com/">Chris</a>. Visit the <a href="https://github.com/brandonmcquarie/easy-node-authentication-angular">Github Repo</a>.</p>
+		<p>Original Node/Express demo by <a href="http://scotch.io">Scotch</a>. Visit the <a href="http://scotch.io/tutorials/javascript/easy-node-authentication-setup-and-local">tutorial</a>.</p>
+	</div>
+
+</div>

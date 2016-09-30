@@ -1,0 +1,164 @@
+<aside class="profile-card">
+	<header>
+		<!-- here’s the avatar -->
+		<a target="_blank" href="#">
+			<img ng-src="{{ user.facebook.picture }}" class="hoverZoomLink">
+		</a>
+
+		<!-- the username -->
+		<h1>
+			{{ user.facebook.name || user.local.email }}
+		</h1>
+
+		<!-- and role or location -->
+		<h2>
+			Better Visuals
+		</h2>
+
+	</header>
+
+	<!-- bit of a bio; who are you? -->
+	<div class="profile-bio">
+
+		<p>
+			It takes monumental improvement for us to change how we live our lives. Design is the way we access that improvement.
+		</p>
+
+	</div>
+
+	<!-- some social links to show off -->
+	<ul class="profile-social-links">
+		<li>
+			<a target="_blank" href="https://www.facebook.com/creativedonut">
+				<ng-md-icon icon="facebook" style="fill:#001572" size="..."></ng-md-icon>
+			</a>
+		</li>
+		<li>
+			<a target="_blank" href="https://twitter.com/dropyourbass">
+				<ng-md-icon icon="twitter" style="fill:#1b95e0" size="..."></ng-md-icon>
+			</a>
+		</li>
+		<li>
+			<a target="_blank" href="https://github.com/vipulsaxena">
+				<ng-md-icon icon="google-plus" style="fill:#e62219" size="..."></ng-md-icon>
+			</a>
+		</li>
+		<li>
+			<a href="/logout">
+
+				<ng-md-icon icon="logout" style="fill:#000" size="..."></ng-md-icon>
+			</a>
+		</li>
+	</ul>
+</aside>
+
+<!--
+<div class="row">
+	<div class="col s12">
+		<h1><span class="fa fa-anchor"></span> Profile Page</h1>
+		<a logout href="/logout" class="btn btn-default btn-sm">Logout</a>
+	</div>
+</div>
+
+
+
+<div class="row">
+
+	&lt;!&ndash; LOCAL INFORMATION &ndash;&gt;
+	<div class="col-sm-6">
+		<div class="well">
+			<h3><span class="fa fa-user"></span> Local</h3>
+
+			<container ng-show="user.local.email">
+				<p>
+					<strong>id</strong>: {{ user._id }}<br>
+					<strong>email</strong>: {{ user.local.email }}<br>
+					<strong>password</strong>: {{ user.local.password }}
+
+				</p>
+				
+				<a redir href="/unlink/local" class="btn btn-default">Unlink</a>
+			</container>
+			<container ng-hide="user.local.email">
+				<a href="/connect/local" class="btn btn-default">Connect Local</a>
+			</container>
+
+		</div>
+	</div>
+
+	&lt;!&ndash; FACEBOOK INFORMATION &ndash;&gt;
+	<div class="col-sm-6">
+		<div class="well">
+			<h3 class="text-primary"><span class="fa fa-facebook"></span> Facebook</h3>
+
+			&lt;!&ndash; check if the user has this token (is the user authenticated with this social account) &ndash;&gt;
+			<container ng-show="user.facebook.token">
+				<p>
+					<strong>id</strong>: {{ user.facebook.id }}<br>
+					<strong>token</strong>: {{ user.facebook.token }}<br>
+					<strong>email</strong>: {{ user.facebook.email }}<br>
+					<strong>name</strong>: {{ user.facebook.name }}<br>
+					<strong>picture- </strong>: <p><img style="min-width: 250px" ng-src="{{ user.facebook.picture }}"> </p>
+				</p>
+
+				<a redir href="/unlink/facebook" class="btn btn-primary">Unlink</a>
+			</container>
+			<container ng-hide="user.facebook.token">
+				<a redir href="/connect/facebook" class="btn btn-primary">Connect Facebook</a>
+			</container>
+
+		</div>
+	</div>
+</div>
+<div class="row">
+
+	&lt;!&ndash; TWITTER INFORMATION &ndash;&gt;
+	<div class="col-sm-6">
+		<div class="well">
+			<h3 class="text-info"><span class="fa fa-twitter"></span> Twitter</h3>
+
+			<container ng-show="user.twitter.token">
+				<p>
+					<strong>id</strong>: {{ user.twitter.id }}<br>
+					<strong>token</strong>: {{ user.twitter.token }}<br>
+					<strong>display name</strong>: {{ user.twitter.displayName }}<br>
+					<strong>username</strong>: {{ user.twitter.username }}
+				</p>
+
+				<a redir href="/unlink/twitter" class="btn btn-info">Unlink</a>
+			</container>
+			<container ng-hide="user.twitter.token">
+				<a redir href="/connect/twitter" class="btn btn-info">Connect Twitter</a>
+			</container>
+
+		</div>
+	</div>
+
+	&lt;!&ndash; GOOGLE INFORMATION &ndash;&gt;
+	<div class="col-sm-6">
+		<div class="well">
+			<h3 class="text-danger"><span class="fa fa-google-plus"></span> Google+</h3>
+
+			<container ng-show="user.google.token">
+				<p>
+					<strong>id</strong>: {{ user.google.id }}<br>
+					<strong>token</strong>: {{ user.google.token }}<br>
+					<strong>email</strong>: {{ user.google.email }}<br>
+					<strong>name</strong>: {{ user.google.name }}
+				</p>
+
+				<a redir href="/unlink/google" class="btn btn-danger">Unlink</a>
+			</container>
+			<container ng-hide="user.google.token">
+				<a redir href="/connect/google" class="btn btn-danger">Connect Google</a>
+			</container>
+
+		</div>
+	</div>
+</div>
+
+<div class="text-center">
+	<p>Angular conversion by <a href="http://brandonmcquarie.com/">Brandon</a> and <a href="http://chrisheninger.com/">Chris</a>. Visit the <a href="https://github.com/brandonmcquarie/easy-node-authentication-angular">Github Repo</a>.</p>
+	<p>Original Node/Express demo by <a href="http://scotch.io">Scotch</a>. Visit the <a href="http://scotch.io/tutorials/javascript/easy-node-authentication-setup-and-local">tutorial</a>.</p>
+</div>
+-->

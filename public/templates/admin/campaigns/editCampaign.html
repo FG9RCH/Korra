@@ -1,0 +1,69 @@
+
+<div class="container" ng-controller="CampaignDetailCtrl">
+    <div class="col s12">
+        <h1 class="md-display-3 headerH1 flow-text center-align">Edit Campaign</h1>
+    </div>
+
+    <div class="row">
+        <form enctype="multipart/form-data" name="editCampaignForm" ng-submit="editCampaign(file)" novalidate>
+
+            <div class="col s12 m12 l9">
+                <div class="row">
+                    <md-input-container>
+                        <label>Title</label>
+                        <input name="title" class="" type="text" id="title"
+                               ng-model="campaigns.title">
+                    </md-input-container>
+                </div>
+                <div class="row">
+                    <md-input-container>
+                        <label>Description</label>
+                        <textarea name="description" rows="8" class="materialize-textarea" type="text" id="description"
+                                  ng-model="campaigns.description"></textarea>
+                    </md-input-container>
+                </div>
+                <div class="row">
+                    <md-input-container>
+                        <label>Goal</label>
+                        <input name="raised" class="col s12" type="text" id="raised"
+                               ng-model="campaigns.raised">
+                    </md-input-container>
+                </div>
+                    <div class="file-field input-field col s6 valign-wrapper">
+                        <md-button class="btn addSubmit" ng-files="getTheFiles($files)" ngf-select ng-model="file" name="file" ngf-pattern="'image/*'"
+                             ngf-accept="'image/*'" ngf-max-size="20MB" >file
+                        </md-button>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <span class="addImgText">Image Preview:</span>
+                    </div>
+                    <div class="file-path-wrapper col s6">
+                        <img style="max-width: 250px" ng-src="uploads/{{campaigns.imgPath}}">
+                    </div>
+
+
+
+            </div>
+
+
+
+            <div class="col s12 m12 l3">
+                    <div class="card">
+                            <span class="editCampaignCredateText valign">Created on : {{ campaigns.createdAt | date:'MM/dd/yyyy @ h:mma' }}</span>
+                            <br>
+                            <span class="editCampaignCredateText valign">Updated on : {{ campaigns.updatedAt | date:'MM/dd/yyyy @ h:mma'}}</span>
+
+                        <br>
+                        <div class="" >
+                            <div class="valign center-align">
+                                <md-button type="submit" class="md-raised md-primary  white-text left-align waves-ripple md-button md-ink-ripple"><span class="acbtns">Submit</span></md-button>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </form>
+    </div>
+</div>
