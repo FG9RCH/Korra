@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Theme = require('../models/Theme.js');
 var Campaign = require('../models/Campaign.js');
+var User = require('../models/User.js');
 var Post = require('../models/Post.js');
 var crypto = require('crypto');
 var path = require('path');
@@ -47,7 +48,17 @@ function getThemes(res){
     res.json(themes)
   });
 }
+function getUsers(res) {
+  User.find(function (err, users) {
 
+    // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+    if (err) {
+      res.send(err);
+    }
+
+    res.json(users); // return all campaigns in JSON format
+  });
+};
 module.exports = function (app, passport) {
 // route middleware to ensure user is logged in - ajax get
   var auth = function(req, res, next) {
@@ -61,24 +72,18 @@ module.exports = function (app, passport) {
   }
 
   app.get('/setup', function (req, res) {
-    var cfmTheme = {
-      name: 'CrowdFundMe',
-      baseCss: 'Materialize',
-      baseUrl: 'vendor/angular-material/angular-material.css',
-      customCss: 'CrowdFundMe',
-      customUrl: 'vendor/Materialize/dist/css/materialize.min.css',
-      active: true
-    };
 
-    var theme = new Theme(cfmTheme);
+    var newUser            = new User();
 
-    theme.save(function (err, theme){
+    newUser.local.email    = 'admin@admin.com';
+    newUser.local.password = '$2a$06$qRQOaB8O2K/BED5b4s8.V.QARSGdcfeCkvgQd0nPPuZ2lobGQwkGu';
+    newUser.save(function(err){
       if (err) {
         console.log(err);
         res.json(err);
       }else {
-        console.log(theme);
-        res.redirect('/setup2')
+        console.log(newUser);
+        res.redirect('/#/login')
       }
     })
 
@@ -401,6 +406,22 @@ module.exports = function (app, passport) {
     })(req, res);
   });
 
+  app.post('/update', function(req, res, next) {
+    console.log(req.body)
+    if (!req.body.email ) {
+      return res.json({ error: 'Email, Username, required' });
+    }
+    passport.authenticate('local-update', function(err, user, info) {
+      if (err) {
+        return res.json(err);
+      }
+      if (user.error) {
+        return res.json({ error: user.error });
+      }
+        res.send(user);
+
+    })(req, res);
+  });
 
   // facebook -------------------------------
 
@@ -550,8 +571,37 @@ module.exports = function (app, passport) {
   });
 // =============================================================================
   app.get('/api/users', auth, function(req, res) {
-    res.send(req.user);
+    getUsers(res);
   });
+
+  app.get('/api/users/:user_id', function (req, res) {
+    User.findOne({
+      _id: req.params.user_id
+    }, function (err, user) {
+      if (err)
+        res.send(err);
+
+      res.json(user);
+    });
+  });
+
+  app.post('/api/users/:user_id', function(req, res) {
+    User.findByIdAndUpdate(req.params.user_id, {
+      $set: {
+        name: req.body.name,
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password
+      }}, {upsert:true}, function (err, post) {
+      if(err)
+      throw err;
+
+      console.log(req.body)
+      return res.json(true);
+    })
+  });
+
+
 
   // show the home page (will also have our login links)
   app.get('*', function(req, res) {
