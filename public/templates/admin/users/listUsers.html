@@ -1,3 +1,24 @@
-<section>
-    <h1 class="center">Users</h1>
-</section>
+<div class="section container " style="margin-top: 25px;">
+    <md-button class="md-raised md-primary white-text left-align waves-ripple" ui-sref="admin.addposts"><span>Add Post</span></md-button>
+
+
+    <table class="highlight responsive-table">
+        <thead>
+        <tr>
+            <th data-field="title">Name.</th>
+            <th data-field="description">Email</th>
+            <th data-field="delete">Delete</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr ng-repeat="user in users" >
+            <td> <a ui-sref="admin.editprofile({id: user._id})">{{user.local.username || user.facebook.name}}</a></td>
+            <td>{{user.local.email || user.facebook.email + '...' | limitTo:32; }}</td>
+            <td class="col s1"><md-button class="md-raised md-primary waves-effect waves-light btn-small" ng-click="deletePost(user._id)"><i class="material-icons lcsni">delete</i></md-button></td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>

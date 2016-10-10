@@ -1,7 +1,7 @@
 /**
  * Created by Frank on 3/10/2016.
  */
-angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdIcons', 'angularCSS'])
+    var korra = angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdIcons', 'angularCSS'])
 
     //---------------
     // Routes
@@ -236,9 +236,9 @@ angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdI
                     loggedin: checkLoggedin
                 }
             })
-            .state('admin.profile', {
-                url: '/profile',
-                templateUrl: '/templates/admin/users/profile.html',
+            .state('admin.editprofile', {
+                url: '/editprofile/:id',
+                templateUrl: '/templates/admin/users/editProfile.html',
                 css: '/templates/admin/newAdmincss.css',
                 controller: 'AdminCtrl',
                 resolve: {
@@ -287,6 +287,15 @@ angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdI
                     loggedin: checkLoggedin
                 }
         })
+            .state('profile-setup', {
+                url: '/profile-setup',
+                templateUrl: '/templates/public/profile/profile-setup.html',
+                css: '/templates/public/profile/profile.css',
+                controller: 'AdminCtrl',
+                resolve: {
+                    loggedin: checkLoggedin
+                }
+            })
             .state('/signup', {
                 url: '/signup',
                 templateUrl: '/templates/public/signup/signup.html',
@@ -309,6 +318,7 @@ angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdI
     // Services
     //---------------
     .factory('Users', ['$http', function($http){
+
         return {
             get: function(){
                 return $http.get('/api/users');
@@ -316,23 +326,26 @@ angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdI
             getbyid : function(id) {
                 return $http.get('/api/users/' + id);
             },
-            create : function(userData) {
-                return $http.post('/signup', userData);
+            signup : function(userData) {
+                return $http.post('/api/signup', userData);
             },
             login : function(userData) {
-                return $http.post('/api/users', userData);
+                return $http.post('/api/login', userData);
             },
             loggedin : function() {
                 return $http.get('/loggedin');
             },
             update : function(id, userData) {
-                return $http.put('/api/users/' + id, userData);
+                return $http.put('/api/users/' + id , userData);
             },
             delete : function(id) {
                 return $http.delete('/api/users/' + id);
             }
         }
     }])
+
+
+
     .factory('Theme', ['$http', function($http){
         return {
             get: function(){
@@ -428,10 +441,10 @@ angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdI
                 .filter(function(pos) { return $scope.toastPosition[pos]; })
                 .join(' ');
         };
-        $scope.showSuccess = function() {
+        $scope.showSuccess = function(message) {
             $mdToast.show(
                 $mdToast.simple()
-                    .content('Campaign Saved!')
+                    .content(message)
                     .position($scope.getToastPosition())
                     .hideDelay(3000)
             );
@@ -444,10 +457,10 @@ angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdI
                     .hideDelay(3000)
             );
         };
-        $scope.showError = function() {
+        $scope.showError = function(message) {
             $mdToast.show(
                 $mdToast.simple()
-                    .content('User not found. Please register')
+                    .content(message)
                     .position($scope.getToastPosition())
                     .hideDelay(3000)
             );
@@ -465,16 +478,21 @@ angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdI
 
         $scope.login = function() {
             var loginData = {
-                email : this.email,
+                username : this.username,
                 password : this.password
             }
 
             Users.login(loginData)
                 .success(function(data) {
-                    $state.go('admin.home')
+                    $scope.success = data;
+                    $scope.showSuccess($scope.success.message);
+                    console.log($scope.success.message)
+                    $state.go($scope.success.state)
+
                 })
                 .error(function(err){
-                    $scope.showError();
+                    $scope.showError(err.message);
+                    console.log(err.message)
             })
         };
         $scope.connect = function() {
@@ -489,14 +507,17 @@ angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdI
         }
         $scope.signup = function() {
 
-            var signinData = {
-                    email : this.email,
-                    password : this.password
+            var signupData = {
+                    username  : this.username,
+                    password  : this.password,
+                    email     : this.email,
+                    firstName : this.firstName,
+                    lastName  : this.lastName
                 }
-            Users.create(signinData)
+            Users.signup(signupData)
                 .success(function(data){
                     console.log(data);
-                    $state.go('profile')
+                    $state.go('admin.home')
                 })
                 .error(function(data) {
                     console.log('Error: ' + data);
@@ -529,17 +550,25 @@ angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdI
 
     }])
     .controller('AdminCtrl', ['$scope',  'Users', '$state', '$mdToast',  '$mdSidenav', '$http', function($scope, Users, $state, $mdToast, $mdSidenav, $http){
+
+        $scope.states = ('AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS ' +
+        'MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI ' +
+        'WY').split(' ').map(function(state) {
+            return {abbrev: state};
+        });
+
+        Users.get()
+            .success(function(data){
+                $scope.users = data;
+                console.log($scope.users);
+            })
+
         Users.loggedin()
             .success(function(data){
                 $scope.currentUser = data;
-                console.log($scope.currentUser)
+                console.log($scope.currentUser);
                 $scope.data = {
                     title: 'Korra',
-                    user: {
-                        name: $scope.currentUser.facebook.name,
-                        email: $scope.currentUser.facebook.email,
-                        picture: $scope.currentUser.facebook.picture
-                    },
                     toolbar: {
                         buttons: [{
                             name: 'Button 1',
@@ -547,8 +576,8 @@ angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdI
                             link: 'Button 1'
                         }],
                         menus: [{
-                            name: $scope.currentUser.facebook.name,
-                            picture: $scope.currentUser.facebook.picture,
+                            name: 'admin',
+                            picture: '',
                             width: '4',
                             actions: [{
                                 name: 'Profile',
@@ -655,11 +684,44 @@ angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdI
                         }]
                     }
                 }
-                console.log($scope.selected);
+               if($scope.currentUser.facebook){
+                    $scope.user = {
+                            name: $scope.currentUser.facebook.name,
+                            email: $scope.currentUser.facebook.email,
+                            picture: $scope.currentUser.facebook.picture
+                        }
+
+
+                }else if($scope.currentUser.local) {
+                    $scope.user = {
+                            name:  $scope.currentUser.local.username,
+                            email: $scope.currentUser.local.email,
+                            picture: $scope.currentUser.local.picture || './uploads/user.jpg'
+
+                        }
+                }
+
                 $scope.adminLink = function (){
                  $state.go()
                 }
 
+                $scope.updateProfile = function(id, profileData){
+
+                    id = $scope.currentUser._id;
+                    profileData = {
+
+                            name: $scope.currentUser.local.name,
+                            email: $scope.currentUser.local.email,
+                            username: $scope.currentUser.local.username,
+                            password: $scope.currentUser.local.password,
+                    }
+
+                    console.log()
+                    Users.update(id, profileData)
+                        .success(function(data){
+                            console.log(data)
+                        })
+                }
 
 
             })
@@ -688,250 +750,6 @@ angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdI
 
 
 
-    }])
-    .controller('CampaignController', ['$scope', 'Users', '$mdToast', 'Upload', 'Campaigns', '$mdSidenav', function ($scope, Users,  $mdToast, Upload, Campaigns, $mdSidenav) {
-        console.log(screen.width)
-        Users.loggedin()
-            .success(function(user){
-                $scope.user = user;
-                console.log($scope.user);
-            })
-        $scope.formData = {};
-        $scope.toastPosition = {
-            bottom: false,
-            top: true,
-            left: false,
-            right: true
-        };
-        $scope.getToastPosition = function() {
-            return Object.keys($scope.toastPosition)
-                .filter(function(pos) { return $scope.toastPosition[pos]; })
-                .join(' ');
-        };
-        $scope.showSuccess = function() {
-            $mdToast.show(
-                $mdToast.simple()
-                    .content('Campaign Saved!')
-                    .position($scope.getToastPosition())
-                    .hideDelay(3000)
-            );
-        };
-        $scope.deleteSuccess = function() {
-            $mdToast.show(
-                $mdToast.simple()
-                    .content('Campaign Deleted!')
-                    .position($scope.getToastPosition())
-                    .hideDelay(3000)
-            );
-        };
-        $scope.showError = function() {
-            $mdToast.show(
-                $mdToast.simple()
-                    .content('Error! Please fill in all form fields')
-                    .position($scope.getToastPosition())
-                    .hideDelay(3000)
-            );
-        };
-        $scope.showAlert = function(ev) {
-            $mdDialog.show(
-                $mdDialog.alert()
-                    .title('This is an alert title')
-                    .content('You can specify some description text in here.')
-                    .ariaLabel('Password notification')
-                    .ok('Got it!')
-                    .targetEvent(ev)
-            );
-        };
-        $scope.openLeftMenu = function() {
-            $mdSidenav('left').toggle();
-        };
-        Campaigns.get()
-            .success(function(data) {
-                $scope.campaigns = data;
-
-                console.log($scope.campaigns);
-            })
-            .error(function(data) {
-                console.log('Error: ' + data);
-            });
-        $scope.addCampaign = function (file) {
-            if ($scope.addCampaignForm.$valid && $scope.file) {
-                console.log($scope.addCampaignForm)
-                Upload.upload({
-                    url: '/api/campaigns',
-                    data: $scope.formData, // Any data needed to be submitted along with the files
-                    file: file
-                }).then(function (resp) {
-                    console.log('Success ' + resp.config.data.file.name + ' uploaded.');
-                    $scope.showSuccess();
-                    $scope.formData = {};
-                    $scope.file = 'http://placehold.it/250x200';// clear the form so our user is ready to enter another
-                    Campaigns.get()
-                        .success(function(data) {
-                            $scope.campaigns = data;
-                            console.log($scope.campaigns);
-                        })
-                        .error(function(data) {
-                            console.log('Error: ' + data);
-                        });
-                }, function (resp) {
-                    console.log('Error status: ' + resp.status);
-                }, function (evt) {
-                    var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-                    console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
-
-                });
-
-            } else {
-                console.log($scope.addCampaignForm.$error)
-                $scope.showError();
-            }
-
-
-            };
-        $scope.deleteCampaign = function(id) {
-            Campaigns.delete(id)
-                // if successful creation, call our get function to get all the new todos
-                .success(function(data) {
-                    $scope.campaigns = data; // assign our new list of todos
-                });
-        };
-    }])
-    .controller('CampaignDetailCtrl', ['$scope', '$mdToast', '$state', '$http', 'Upload', '$mdSidenav', '$stateParams', 'Campaigns', function ($scope, $mdToast, $state, $http,  Upload, $mdSidenav, $stateParams, Campaigns) {
-        var id = $stateParams.id;
-        $scope.formData = {};
-        $scope.required = true;
-        $scope.isSidenavOpen = true;
-        $scope.toastPosition = {
-            bottom: false,
-            top: true,
-            left: false,
-            right: true
-        };
-        $scope.getToastPosition = function() {
-            return Object.keys($scope.toastPosition)
-                .filter(function(pos) { return $scope.toastPosition[pos]; })
-                .join(' ');
-        };
-        $scope.showSuccess = function() {
-            $mdToast.show(
-                $mdToast.simple()
-                    .content('Campaign Saved!')
-                    .position($scope.getToastPosition())
-                    .hideDelay(3000)
-            );
-        };
-        $scope.deleteSuccess = function() {
-            $mdToast.show(
-                $mdToast.simple()
-                    .content('Campaign Deleted!')
-                    .position($scope.getToastPosition())
-                    .hideDelay(3000)
-            );
-        };
-        $scope.showError = function() {
-            $mdToast.show(
-                $mdToast.simple()
-                    .content('Error! Please fill in all form fields')
-                    .position($scope.getToastPosition())
-                    .hideDelay(3000)
-            );
-        };
-        $scope.showAlert = function(ev) {
-            $mdDialog.show(
-                $mdDialog.alert()
-                    .title('This is an alert title')
-                    .content('You can specify some description text in here.')
-                    .ariaLabel('Password notification')
-                    .ok('Got it!')
-                    .targetEvent(ev)
-            );
-        };
-        $scope.deleteCampaign = function(id) {
-            Campaigns.delete(id)
-                // if successful creation, call our get function to get all the new todos
-                .success(function(data) {
-                    $scope.deleteSuccess();
-                    /*Campaigns.getbyid($stateParams.id)
-                     .success(function(data) {
-                     $scope.campaigns = data;
-                     console.log($scope.campaigns);
-                     })
-                     .error(function(data) {
-                     console.log('Error: ' + data);
-                     });*/
-                    $state.go('admin.campaigns');
-                });
-        };
-
-
-        Campaigns.getbyid($stateParams.id)
-            .success(function(data) {
-                $scope.campaigns = {};
-                $scope.campaigns = data;
-                console.log($scope.campaigns['imgPath']);
-
-            })
-            .error(function(data) {
-                console.log('Error: ' + data);
-            });
-        $scope.editCampaign = function (file) {
-            console.log($scope.file)
-            if ($scope.editCampaignForm.$valid && !$scope.file) {
-                Campaigns.update($stateParams.id, $scope.campaigns)
-                    .success(function (data) {
-                        console.log($scope.campaigns);
-                        $scope.showSuccess();
-                        /*Campaigns.getbyid($stateParams.id)
-                         .success(function(data) {
-                         $scope.campaigns = data;
-                         console.log($scope.campaigns);
-                         })
-                         .error(function(data) {
-                         console.log('Error: ' + data);
-                         });*/
-                        $state.go('admin.campaigns');
-                    }).error(function(data) {
-                    console.log('Error: ' + data);
-                });
-            }else if($scope.editCampaignForm.$valid && $scope.file){
-                Upload.upload({
-                    method: 'put',
-                    url: '/api/campaigns/' + id,
-                    data: $scope.campaigns, // Any data needed to be submitted along with the files
-                    file: file
-                }).then(function (resp) {
-                    console.log('Success ' + resp.config.data.file.name + ' uploaded.');
-                    $scope.showSuccess();
-                    /*Campaigns.getbyid($stateParams.id)
-                     .success(function(data) {
-                     $scope.campaigns = data;
-                     console.log($scope.campaigns);
-                     })
-                     .error(function(data) {
-                     console.log('Error: ' + data);
-                     });*/
-                    $state.go('admin.campaigns');
-                }, function (resp) {
-                    console.log('Error status: ' + resp.status);
-                }, function (evt) {
-                    var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-                    console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
-
-                });
-            }else{
-                console.log($scope.editCampaignForm.$error)
-                $scope.showError();
-            }
-        };
-        $scope.openLeftMenu = function() {
-            $mdSidenav('left').toggle();
-        };
-        $scope.$watch('isSidenavOpen', function(isSidenavOpen) {
-        if (isSidenavOpen){
-
-        }
-        });
     }])
     .controller('PostController', ['$scope', '$mdToast', 'Upload', 'Posts', '$mdSidenav', function ($scope, $mdToast, Upload, Posts, $mdSidenav) {
         console.log(screen.width)

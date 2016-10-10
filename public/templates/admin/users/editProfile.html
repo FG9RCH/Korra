@@ -1,0 +1,48 @@
+<section class="inputdemoIcons">
+    <div class="container inputIconDemo">
+        <div layout="column" layout-padding ng-cloak>
+            <br/>
+            <form ng-submit="updateProfile()">
+                <md-card>
+                    <md-content class="md-no-momentum">
+                        <md-input-container class="md-block md-icon-left md-input-has-placeholder">
+                            <!-- Use floating label instead of placeholder -->
+                            <label>Name</label>
+                            <md-icon class="name">person</md-icon>
+                            <input ng-if="currentUser.local" ng-model="currentUser.local.name" type="text">
+                            <input ng-if="currentUser.facebook" ng-model="currentUser.facebook.name" type="text">
+
+                        </md-input-container>
+
+                        <md-input-container md-no-float ng-if="users.local" class="md-block md-icon-left md-input-has-placeholder">
+                            <md-icon >person</md-icon>
+                            <input  ng-model="users.local.username" type="text" placeholder="username">
+                        </md-input-container>
+
+                        <md-input-container class="md-block md-icon-left md-input-has-placeholder">
+                            <!-- Use floating placeholder instead of label -->
+                            <md-icon class="email">email</md-icon>
+                            <input ng-if="users.local" ng-model="users.local.email" type="email" placeholder="Email (required)" ng-required="true">
+                            <input ng-if="users.facebook" ng-model="users.facebook.email" type="email">
+                        </md-input-container>
+
+                        <md-input-container ng-if="users.local" class="md-block md-icon-left md-input-has-placeholder">
+                            <!-- Use floating placeholder instead of label -->
+                            <md-icon class="password">password</md-icon>
+                            <input ng-model="users.local.password" type="password" placeholder="password (required)" ng-required="true">
+                        </md-input-container>
+
+                        <md-button type="submit">submit</md-button>
+
+                    </md-content>
+                </md-card>
+            </form>
+
+
+
+
+        </div>
+    </div>
+
+
+</section>

@@ -1,27 +1,27 @@
-var express = require('express');
-var app = express();
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var db = require('./server/db/db');
-var morgan = require('morgan');
-var bodyParser = require('body-parser');
-var passport = require('passport');
-var flash    = require('connect-flash');
-var session      = require('express-session');
+var express        = require('express');
+var app            = express();
+var path           = require('path');
+var favicon        = require('serve-favicon');
+var logger         = require('morgan');
+var cookieParser   = require('cookie-parser');
+var db             = require('./server/db/db');
+var morgan         = require('morgan');
+var bodyParser     = require('body-parser');
+var passport       = require('passport');
+var flash          = require('connect-flash');
+var session        = require('express-session');
 var methodOverride = require('method-override');
-var routes = require('./server/routes/index');
-var config = require('./server/db/config');
+var routes         = require('./server/routes/index');
+var config         = require('./server/db/config');
 require('./server/config/passport')(passport);
-
-
 
 
 // view engine setup
 app.engine('html', require('ejs').renderFile);
 app.set('views', path.join(__dirname, 'server/views'));
 app.set('view engine', 'ejs');
+
+
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

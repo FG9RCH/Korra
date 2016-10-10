@@ -75,7 +75,7 @@ module.exports = function (app, passport) {
 
     var newUser            = new User();
 
-    newUser.local.email    = 'admin@admin.com';
+    newUser.local.username    = 'admin';
     newUser.local.password = '$2a$06$qRQOaB8O2K/BED5b4s8.V.QARSGdcfeCkvgQd0nPPuZ2lobGQwkGu';
     newUser.save(function(err){
       if (err) {
@@ -361,12 +361,12 @@ module.exports = function (app, passport) {
   // locally --------------------------------
   // LOGIN ===============================
 
-  // process the login form
+/*  // process the login form
   app.post('/login', function(req, res, next) {
     if (!req.body.email || !req.body.password) {
       return res.json({ error: 'Email and Password required' });
     }
-    passport.authenticate('local-login', function(err, user, info) {
+    passport.authenticate('login', function(err, user, info) {
       if (err) {
         return res.json(err);
       }
@@ -390,7 +390,7 @@ module.exports = function (app, passport) {
     if (!req.body.email || !req.body.password) {
       return res.json({ error: 'Email, Username, and Password required' });
     }
-    passport.authenticate('local-signup', function(err, user, info) {
+    passport.authenticate('signup', function(err, user, info) {
       if (err) {
         return res.json(err);
       }
@@ -404,24 +404,36 @@ module.exports = function (app, passport) {
         res.send(user);
       });
     })(req, res);
-  });
+  });*/
 
-  app.post('/update', function(req, res, next) {
-    console.log(req.body)
-    if (!req.body.email ) {
-      return res.json({ error: 'Email, Username, required' });
-    }
-    passport.authenticate('local-update', function(err, user, info) {
+  /* Handle Login POST */
+  app.post('/api/login', function(req, res, next) {
+    passport.authenticate('login', function(err, user, info) {
       if (err) {
-        return res.json(err);
+        return next(err); // will generate a 500 error
       }
-      if (user.error) {
-        return res.json({ error: user.error });
+      // Generate a JSON response reflecting authentication status
+      if (! user) {
+        return res.send(401,{ success : false, message : 'Authentication failed' });
       }
-        res.send(user);
+      req.login(user, function(err){
+        if(err){
+          return res.status(400).send({ success : false, message : 'User not found' });
+        }
+        return res.send({ success : true, message : 'Login Successful', state : 'admin.campaigns' });
+      });
+    })(req, res, next);
 
-    })(req, res);
   });
+
+
+
+  /* Handle Registration POST */
+  app.post('/api/signup', passport.authenticate('signup', {
+    successRedirect: '/#/admin/campaigns',
+    failureRedirect: '/#/login',
+    failureFlash : true
+  }));
 
   // facebook -------------------------------
 
@@ -431,7 +443,7 @@ module.exports = function (app, passport) {
   // handle the callback after facebook has authenticated the user
   app.get('/auth/facebook/callback',
       passport.authenticate('facebook', {
-        successRedirect : '/#/admin/home',
+        successRedirect : '/#/admin/campaigns',
         failureRedirect : '/#/login'
       }));
 
@@ -605,7 +617,7 @@ module.exports = function (app, passport) {
 
   // show the home page (will also have our login links)
   app.get('*', function(req, res) {
-    res.sendfile('./public/index.html');
+    res.sendFile('./public/index.html');
   });
 
 

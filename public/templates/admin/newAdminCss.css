@@ -1,5 +1,5 @@
 body {
-    overflow: hidden;
+
     background-color: #EEEEEE;
 }
 
@@ -30,3 +30,10 @@ span.hdrMenu {
     background-image: url("uploads/b6d9ef5adadbe7ef29a50a5deabe29a3.jpg");
 }
 
+span.md-caption.ng-binding {
+    padding: 0px;
+}
+
+span.md-body-2.ng-binding {
+    padding: 0px;
+}

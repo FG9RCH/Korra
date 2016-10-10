@@ -68,15 +68,15 @@
         <md-sidenav class="md-sidenav-left md-whiteframe-z2" role="sidenav" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
             <md-toolbar class="md-tall md-hue-2 snbg" layout-align="end end">
                 <div class="md-toolbar-tools" layout layout-padding>
-                    <md-icon>{{data.user.icon}}</md-icon>
+                    <img class="circle responsive-img md-padding" style="width: 22%;" ng-src="{{user.picture}}">
                     <div layout="column" layout-padding>
-                        <span class="md-body-2">{{data.user.name}}</span>
-                        <span class="md-caption">{{data.user.email}}</span>
+                        <span class="md-body-2">{{user.name}}</span>
+                        <span class="md-caption">{{user.email}}</span>
                     </div>
                     <span flex></span>
-                    <md-button class="md-icon-button" aria-label="User Settings" ng-click="toast('Logout')">
+                    <!--<md-button class="md-icon-button" aria-label="User Settings" ng-click="toast('Logout')">
                         <md-icon>more_vert</md-icon>
-                    </md-button>
+                    </md-button>-->
                 </div>
             </md-toolbar>
             <md-content role="navigation">
@@ -108,10 +108,10 @@
                     <md-menu md-position-mode="target-right target" ng-repeat="menu in data.toolbar.menus">
                         <md-button class="md-icon-button" aria-label="{{menu.name}}" ng-click="$mdOpenMenu($event)">
                             <!--<md-icon>{{menu.icon}}</md-icon>-->
-                            <img class="circle responsive-img" ng-src="{{data.user.picture}}">
+                            <img class="circle responsive-img" ng-src="{{user.picture}}">
                         </md-button>
                         <md-menu-content width={{menu.width}}>
-                            <md-subheader><img class="circle responsive-img" style="width: 14%;" ng-src="{{menu.picture}}"> <span class="hdrMenu"> {{menu.name}}</span></md-subheader>
+                            <md-subheader><img class="circle responsive-img" style="width: 14%;" ng-src="{{user.picture}}"> <span class="hdrMenu"> {{user.name}}</span></md-subheader>
                             <md-menu-item ng-repeat="action in menu.actions">
                                 <md-button logout href="{{action.link}}"  layout-fill md-ink-ripple ng-click="toast(action.message)">
                                     <md-icon md-class="{{action.error ? 'md-warn' : 'md-primary'}}" md-menu-align-target>{{action.icon}}</md-icon>

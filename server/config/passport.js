@@ -3,14 +3,15 @@ var LocalStrategy    = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var TwitterStrategy  = require('passport-twitter').Strategy;
 var GoogleStrategy   = require('passport-google-oauth').OAuth2Strategy;
-
 // load up the user model
 var User       = require('../models/User');
 
 // load the auth variables
 var configAuth = require('../config/auth'); // use this one for testing
 
+
 module.exports = function(passport) {
+
 
     // =========================================================================
     // passport session setup ==================================================
@@ -29,23 +30,19 @@ module.exports = function(passport) {
             done(err, user);
         });
     });
-
-    // =========================================================================
-    // LOCAL LOGIN =============================================================
-    // =========================================================================
-    passport.use('local-login', new LocalStrategy({
+    // passport/login.js
+    passport.use('login', new LocalStrategy({
             // by default, local strategy uses username and password, we will override with email
-            usernameField : 'email',
+            usernameField : 'username',
             passwordField : 'password',
             passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
         },
-        function(req, email, password, done) {
-            if (email)
-                email = email.toLowerCase(); // Use lower-case e-mails to avoid case-sensitive e-mail matching
+        function(req, username, password, done) {
+            if (username)
 
             // asynchronous
             process.nextTick(function() {
-                User.findOne({ 'local.email' :  email }, function(err, user) {
+                User.findOne({ 'local.username' :  username }, function(err, user) {
                     // if there are any errors, return the error
                     if (err)
                         return done(err);
@@ -64,67 +61,53 @@ module.exports = function(passport) {
             });
         }));
 
-    // =========================================================================
-    // LOCAL SIGNUP =============================================================
-    // =========================================================================
-    passport.use('local-signup', new LocalStrategy({
-            // by default, local strategy uses username and password, we will override with email
-            usernameField : 'email',
-            passwordField : 'password',
-
-            passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+    passport.use('signup', new LocalStrategy({
+            passReqToCallback : true // allows us to pass back the entire request to the callback
         },
-        function(req, email, password, done) {
-            if (email)
-                email = email.toLowerCase(); // Use lower-case e-mails to avoid case-sensitive e-mail matching
-            // asynchronous
-            process.nextTick(function() {
-                // if the user is not already logged in:
-                if (!req.user) {
-                    User.findOne({ 'local.email' :  email }, function(err, user) {
-                        // if there are any errors, return the error
-                        if (err)
-                            return done(err);
+        function(req, username, password, done) {
 
-                        console.log(user);
-                        // check to see if theres already a user with that email
-                        if (user) {
-                            return done(null, { error: 'That email is already taken.' });
-                        } else {
+            findOrCreateUser = function(){
+                // find a user in Mongo with provided username
+                User.findOne({ 'local.username' :  username }, function(err, user) {
+                    // In case of any error, return using the done method
+                    if (err){
+                        console.log('Error in SignUp: '+err);
+                        return done(err);
+                    }
+                    // already exists
+                    if (user) {
+                        console.log('User already exists with username: '+username);
+                        return done(null, false, req.flash('message','User Already Exists'));
+                    } else {
+                        // if there is no user with that email
+                        // create the user
+                        var newUser = new User();
 
-                            // create the user
-                            var newUser            = new User();
+                        // set the user's local credentials
+                        newUser.username = username;
+                        newUser.password = createHash(password);
+                        newUser.email = req.param('email');
+                        newUser.firstName = req.param('firstName');
+                        newUser.lastName = req.param('lastName');
 
-                            newUser.local.email    = email;
-                            newUser.local.password = newUser.generateHash(password);
-                            newUser.save(function(err) {
-                                if (err)
-                                    throw err;
+                        // save the user
+                        newUser.save(function(err) {
+                            if (err){
+                                console.log('Error in Saving user: '+err);
+                                throw err;
+                            }
+                            console.log('User Registration succesful');
+                            return done(null, newUser);
+                        });
+                    }
+                });
+            };
+            // Delay the execution of findOrCreateUser and execute the method
+            // in the next tick of the event loop
+            process.nextTick(findOrCreateUser);
+        })
+    );
 
-                                return done(null, newUser);
-                            });
-                        }
-
-                    });
-                    // if the user is logged in but has no local account...
-                } else if ( !req.user.local.email ) {
-                    // ...presumably they're trying to connect a local account
-                    var user            = req.user;
-                    user.local.email    = email;
-                    user.local.password = user.generateHash(password);
-                    user.save(function(err) {
-                        if (err)
-                            throw err;
-                        return done(null, user);
-                    });
-                } else {
-                    // user is logged in and already has a local account. Ignore signup. (You should log out before trying to create a new account, user!)
-                    return done(null, req.user);
-                }
-
-            });
-
-        }));
 
 
     // =========================================================================
@@ -207,155 +190,5 @@ console.log(profile);
 
         }));
 
-    // =========================================================================
-    // TWITTER =================================================================
-    // =========================================================================
-    passport.use(new TwitterStrategy({
-
-            consumerKey     : configAuth.twitterAuth.consumerKey,
-            consumerSecret  : configAuth.twitterAuth.consumerSecret,
-            callbackURL     : configAuth.twitterAuth.callbackURL,
-            passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
-
-        },
-        function(req, token, tokenSecret, profile, done) {
-
-            // asynchronous
-            process.nextTick(function() {
-
-                // check if the user is already logged in
-                if (!req.user) {
-
-                    User.findOne({ 'twitter.id' : profile.id }, function(err, user) {
-                        if (err)
-                            return done(err);
-
-                        if (user) {
-                            // if there is a user id already but no token (user was linked at one point and then removed)
-                            if (!user.twitter.token) {
-                                user.twitter.token       = token;
-                                user.twitter.username    = profile.username;
-                                user.twitter.displayName = profile.displayName;
-
-                                user.save(function(err) {
-                                    if (err)
-                                        throw err;
-                                    return done(null, user);
-                                });
-                            }
-
-                            return done(null, user); // user found, return that user
-                        } else {
-                            // if there is no user, create them
-                            var newUser                 = new User();
-
-                            newUser.twitter.id          = profile.id;
-                            newUser.twitter.token       = token;
-                            newUser.twitter.username    = profile.username;
-                            newUser.twitter.displayName = profile.displayName;
-
-                            newUser.save(function(err) {
-                                if (err)
-                                    throw err;
-                                return done(null, newUser);
-                            });
-                        }
-                    });
-
-                } else {
-                    // user already exists and is logged in, we have to link accounts
-                    var user                 = req.user; // pull the user out of the session
-
-                    user.twitter.id          = profile.id;
-                    user.twitter.token       = token;
-                    user.twitter.username    = profile.username;
-                    user.twitter.displayName = profile.displayName;
-
-                    user.save(function(err) {
-                        if (err)
-                            throw err;
-                        return done(null, user);
-                    });
-                }
-
-            });
-
-        }));
-
-    // =========================================================================
-    // GOOGLE ==================================================================
-    // =========================================================================
-    passport.use(new GoogleStrategy({
-
-            clientID        : configAuth.googleAuth.clientID,
-            clientSecret    : configAuth.googleAuth.clientSecret,
-            callbackURL     : configAuth.googleAuth.callbackURL,
-            passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
-
-        },
-        function(req, token, refreshToken, profile, done) {
-
-            // asynchronous
-            process.nextTick(function() {
-
-                // check if the user is already logged in
-                if (!req.user) {
-
-                    User.findOne({ 'google.id' : profile.id }, function(err, user) {
-                        if (err)
-                            return done(err);
-
-                        if (user) {
-
-                            // if there is a user id already but no token (user was linked at one point and then removed)
-                            if (!user.google.token) {
-                                user.google.token = token;
-                                user.google.name  = profile.displayName;
-                                user.google.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-
-                                user.save(function(err) {
-                                    if (err)
-                                        throw err;
-                                    return done(null, user);
-                                });
-                            }
-
-                            return done(null, user);
-                        } else {
-                            var newUser          = new User();
-
-                            newUser.google.id    = profile.id;
-                            newUser.google.token = token;
-                            newUser.google.name  = profile.displayName;
-                            newUser.google.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-
-                            newUser.save(function(err) {
-                                if (err)
-                                    throw err;
-                                return done(null, newUser);
-                            });
-                        }
-                    });
-
-                } else {
-                    // user already exists and is logged in, we have to link accounts
-                    var user               = req.user; // pull the user out of the session
-
-                    user.google.id    = profile.id;
-                    user.google.token = token;
-                    user.google.name  = profile.displayName;
-                    user.google.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-
-                    user.save(function(err) {
-                        if (err)
-                            throw err;
-                        return done(null, user);
-                    });
-
-                }
-
-            });
-
-        }));
 
 };

@@ -1,0 +1,45 @@
+<section class="inputdemoIcons">
+    <div class="container inputIconDemo">
+        <div layout="column" layout-padding ng-cloak>
+            <br/>
+            <form ng-submit="updateProfile()">
+                <md-card>
+                    <md-content class="md-no-momentum">
+                        <md-input-container class="md-block md-icon-left md-input-has-placeholder">
+                            <!-- Use floating label instead of placeholder -->
+                            <label>Name</label>
+                            <md-icon class="name">person</md-icon>
+                            <input ng-model="currentUser.local.name" type="text">
+                        </md-input-container>
+
+                        <md-input-container md-no-float class="md-block md-icon-left md-input-has-placeholder">
+                            <md-icon >person</md-icon>
+                            <input ng-model="currentUser.local.username" type="text" placeholder="username">
+                        </md-input-container>
+
+                        <md-input-container class="md-block md-icon-left md-input-has-placeholder">
+                            <!-- Use floating placeholder instead of label -->
+                            <md-icon class="email">email</md-icon>
+                            <input ng-model="currentUser.local.email" type="email" placeholder="Email (required)" ng-required="true">
+                        </md-input-container>
+
+                        <md-input-container class="md-block md-icon-left md-input-has-placeholder">
+                            <!-- Use floating placeholder instead of label -->
+                            <md-icon class="password">password</md-icon>
+                            <input ng-model="currentUser.local.password" type="password" placeholder="password (required)" ng-required="true">
+                        </md-input-container>
+
+                        <md-button type="submit">submit</md-button>
+
+                    </md-content>
+                </md-card>
+            </form>
+
+
+
+
+        </div>
+    </div>
+
+
+</section>
