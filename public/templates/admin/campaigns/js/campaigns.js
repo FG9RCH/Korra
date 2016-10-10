@@ -2,9 +2,49 @@
  * Created by Frank on 10/10/2016.
  */
 
-    angular.module(Korra.campaigns, ['ngRoute'])
+    angular.module('KorraCampaigns', ['ngRoute'])
+     var checkLoggedin = function($q, $timeout, $http, $location, $rootScope){
+    // Initialize a new promise
+    var deferred = $q.defer();
 
-    .config(['$stateProvider', function($stateProvider) {
+    // Make an AJAX call to check if the user is logged in
+    $http.get('/loggedin').success(function(user){
+        // Authenticated
+        if (user !== '0')
+        /*$timeout(deferred.resolve, 0);*/
+            deferred.resolve();
+
+        // Not Authenticated
+        else {
+            $rootScope.message = 'You need to log in.';
+            //$timeout(function(){deferred.reject();}, 0);
+
+            $location.url('/login');
+            deferred.reject();
+        }
+    });
+
+    return deferred.promise;
+};
+    korra.config(['$stateProvider', '$httpProvider',  function($stateProvider, $httpProvider) {
+
+        //================================================
+        //================================================
+        // Add an interceptor for AJAX errors
+        //================================================
+        $httpProvider.interceptors.push(function($q, $location) {
+            return {
+                response: function(response) {
+                    // do something on success
+                    return response;
+                },
+                responseError: function(response) {
+                    if (response.status === 401)
+                        $location.url('/login');
+                    return $q.reject(response);
+                }
+            };
+        });
 
     $stateProvider
         .state('admin.campaigns', {
@@ -36,7 +76,7 @@
         })
     }])
 
-        .controller('CampaignController', ['$scope', 'Users', '$mdToast', 'Upload', 'Campaigns', '$mdSidenav', function ($scope, Users,  $mdToast, Upload, Campaigns, $mdSidenav) {
+        korra.controller('CampaignController', ['$scope', 'Users', '$mdToast', 'Upload', 'Campaigns', '$mdSidenav', function ($scope, Users,  $mdToast, Upload, Campaigns, $mdSidenav) {
     console.log(screen.width)
     Users.loggedin()
         .success(function(user){
@@ -144,7 +184,8 @@
             });
     };
 }])
-        .controller('CampaignDetailCtrl', ['$scope', '$mdToast', '$state', '$http', 'Upload', '$mdSidenav', '$stateParams', 'Campaigns', function ($scope, $mdToast, $state, $http,  Upload, $mdSidenav, $stateParams, Campaigns) {
+
+        korra.controller('CampaignDetailCtrl', ['$scope', '$mdToast', '$state', '$http', 'Upload', '$mdSidenav', '$stateParams', 'Campaigns', function ($scope, $mdToast, $state, $http,  Upload, $mdSidenav, $stateParams, Campaigns) {
         var id = $stateParams.id;
         $scope.formData = {};
         $scope.required = true;

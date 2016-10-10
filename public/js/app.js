@@ -1,7 +1,7 @@
 /**
  * Created by Frank on 3/10/2016.
  */
-    angular.module('Korra', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdIcons', 'angularCSS'])
+    var korra = angular.module('Korra', ['ngMaterial', 'ui.router',  'ngFileUpload', 'ngMdIcons', 'angularCSS'])
 
     //---------------
     // Routes
