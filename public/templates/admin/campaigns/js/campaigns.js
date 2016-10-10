@@ -2,9 +2,41 @@
  * Created by Frank on 10/10/2016.
  */
 
+    angular.module(Korra.campaigns, ['ngRoute'])
 
+    .config(['$stateProvider', function($stateProvider) {
 
-    korra.controller('CampaignController', ['$scope', 'Users', '$mdToast', 'Upload', 'Campaigns', '$mdSidenav', function ($scope, Users,  $mdToast, Upload, Campaigns, $mdSidenav) {
+    $stateProvider
+        .state('admin.campaigns', {
+        url: '/campaigns',
+        templateUrl: '/templates/admin/campaigns/views/campaignList.html',
+        css: '/templates/admin/newAdmincss.css',
+        controller: 'CampaignController',
+        resolve: {
+            loggedin: checkLoggedin
+        }
+    })
+        .state('admin.addcampaigns', {
+            url: '/addcampaign',
+            templateUrl: '/templates/admin/campaigns/views/addCampaign.html',
+            css: '/templates/admin/newAdmincss.css',
+            controller: 'CampaignController',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
+        .state('admin.editcampaigns', {
+            url: '/editcampaign/:id',
+            templateUrl: '/templates/admin/campaigns/views/editCampaign.html',
+            css: '/templates/admin/newAdminCss.css',
+            controller: 'CampaignDetailCtrl',
+            resolve: {
+                loggedin: checkLoggedin
+            }
+        })
+    }])
+
+        .controller('CampaignController', ['$scope', 'Users', '$mdToast', 'Upload', 'Campaigns', '$mdSidenav', function ($scope, Users,  $mdToast, Upload, Campaigns, $mdSidenav) {
     console.log(screen.width)
     Users.loggedin()
         .success(function(user){
@@ -112,7 +144,7 @@
             });
     };
 }])
-    korra.controller('CampaignDetailCtrl', ['$scope', '$mdToast', '$state', '$http', 'Upload', '$mdSidenav', '$stateParams', 'Campaigns', function ($scope, $mdToast, $state, $http,  Upload, $mdSidenav, $stateParams, Campaigns) {
+        .controller('CampaignDetailCtrl', ['$scope', '$mdToast', '$state', '$http', 'Upload', '$mdSidenav', '$stateParams', 'Campaigns', function ($scope, $mdToast, $state, $http,  Upload, $mdSidenav, $stateParams, Campaigns) {
         var id = $stateParams.id;
         $scope.formData = {};
         $scope.required = true;

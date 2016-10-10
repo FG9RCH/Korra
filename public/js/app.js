@@ -1,7 +1,7 @@
 /**
  * Created by Frank on 3/10/2016.
  */
-    var korra = angular.module('MyCrowdFund', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdIcons', 'angularCSS'])
+    angular.module('Korra', ['ngMaterial', 'ui.router', 'ngFileUpload', 'ngMdIcons', 'angularCSS'])
 
     //---------------
     // Routes
@@ -164,33 +164,7 @@
                     loggedin: checkLoggedin
                 }
             })
-            .state('admin.campaigns', {
-                url: '/campaigns',
-                templateUrl: '/templates/admin/campaigns/views/campaignList.html',
-                css: '/templates/admin/newAdmincss.css',
-                controller: 'CampaignController',
-                resolve: {
-                    loggedin: checkLoggedin
-                }
-            })
-            .state('admin.addcampaigns', {
-                url: '/addcampaign',
-                templateUrl: '/templates/admin/campaigns/views/addCampaign.html',
-                css: '/templates/admin/newAdmincss.css',
-                controller: 'CampaignController',
-                resolve: {
-                    loggedin: checkLoggedin
-                }
-            })
-            .state('admin.editcampaigns', {
-                url: '/editcampaign/:id',
-                templateUrl: '/templates/admin/campaigns/views/editCampaign.html',
-                css: '/templates/admin/newAdmincss.css',
-                controller: 'CampaignDetailCtrl',
-                resolve: {
-                    loggedin: checkLoggedin
-                }
-            })
+
             .state('admin.posts', {
                 url: '/posts',
                 templateUrl: '/templates/admin/posts/postList.html',
