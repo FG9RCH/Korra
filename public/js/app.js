@@ -166,7 +166,7 @@
             })
             .state('admin.campaigns', {
                 url: '/campaigns',
-                templateUrl: '/templates/admin/campaigns/campaignList.html',
+                templateUrl: '/templates/admin/campaigns/views/campaignList.html',
                 css: '/templates/admin/newAdmincss.css',
                 controller: 'CampaignController',
                 resolve: {
@@ -175,7 +175,7 @@
             })
             .state('admin.addcampaigns', {
                 url: '/addcampaign',
-                templateUrl: '/templates/admin/campaigns/addCampaign.html',
+                templateUrl: '/templates/admin/campaigns/views/addCampaign.html',
                 css: '/templates/admin/newAdmincss.css',
                 controller: 'CampaignController',
                 resolve: {
@@ -184,7 +184,7 @@
             })
             .state('admin.editcampaigns', {
                 url: '/editcampaign/:id',
-                templateUrl: '/templates/admin/campaigns/editCampaign.html',
+                templateUrl: '/templates/admin/campaigns/views/editCampaign.html',
                 css: '/templates/admin/newAdmincss.css',
                 controller: 'CampaignDetailCtrl',
                 resolve: {
