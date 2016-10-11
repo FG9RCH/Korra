@@ -84,19 +84,19 @@ module.exports = function(passport) {
                         var newUser = new User();
 
                         // set the user's local credentials
-                        newUser.username = username;
-                        newUser.password = createHash(password);
-                        newUser.email = req.param('email');
-                        newUser.firstName = req.param('firstName');
-                        newUser.lastName = req.param('lastName');
-
+                        newUser.local.username = username;
+                        newUser.local.password = newUser.generateHash(password);
+                        newUser.local.email = req.body.email;
+                        newUser.local.firstName = req.body.firstName;
+                        newUser.local.lastName = req.body.lastName;
+console.log(newUser);
                         // save the user
                         newUser.save(function(err) {
                             if (err){
                                 console.log('Error in Saving user: '+err);
                                 throw err;
                             }
-                            console.log('User Registration succesful');
+                            console.log('User Registration succesful'  + '<br />' + newUser);
                             return done(null, newUser);
                         });
                     }

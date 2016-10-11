@@ -429,11 +429,18 @@ module.exports = function (app, passport) {
 
 
   /* Handle Registration POST */
-  app.post('/api/signup', passport.authenticate('signup', {
-    successRedirect: '/#/admin/campaigns',
-    failureRedirect: '/#/login',
-    failureFlash : true
-  }));
+  app.post('/api/signup',  function(req, res, next) {
+    passport.authenticate('signup', function(err, user, info) {
+
+      req.login(user, function(err){
+        if(err){
+          throw err;
+        }
+        return res.send({  success : true, message : 'Sign up Successful', state : 'admin.home', user: user });
+      });
+    })(req, res, next);
+
+  });
 
   // facebook -------------------------------
 
@@ -615,7 +622,7 @@ module.exports = function (app, passport) {
 
 
 
-  // show the home page (will also have our login links)
+  // show the admin page (will also have our login links)
   app.get('*', function(req, res) {
     res.sendFile('./public/index.html');
   });

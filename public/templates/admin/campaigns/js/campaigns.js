@@ -53,7 +53,7 @@
             .state('admin.campaigns', {
             url: '/campaigns',
             templateUrl: '/templates/admin/campaigns/views/campaignList.html',
-            css: '/templates/admin/newAdmincss.css',
+            css: '/templates/admin/admin.css',
             controller: 'CampaignController',
             resolve: {
                 loggedin: checkLoggedin
@@ -62,7 +62,7 @@
             .state('admin.addcampaigns', {
                 url: '/addcampaign',
                 templateUrl: '/templates/admin/campaigns/views/addCampaign.html',
-                css: '/templates/admin/newAdmincss.css',
+                css: '/templates/admin/admin.css',
                 controller: 'CampaignController',
                 resolve: {
                     loggedin: checkLoggedin
@@ -71,7 +71,7 @@
             .state('admin.editcampaigns', {
                 url: '/editcampaign/:id',
                 templateUrl: '/templates/admin/campaigns/views/editCampaign.html',
-                css: '/templates/admin/newAdminCss.css',
+                css: '/templates/admin/admin.css',
                 controller: 'CampaignDetailCtrl',
                 resolve: {
                     loggedin: checkLoggedin

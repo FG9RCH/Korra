@@ -1,6 +1,7 @@
 /**
  * Created by Frank on 10/10/2016.
  */
+
     angular.module('KorraPosts', ['ngRoute']);
 
 
@@ -80,7 +81,25 @@
 
 
 }]);
-
+    korra.factory('Posts', ['$http', function($http){
+        return {
+            get: function(){
+                return $http.get('/api/posts');
+            },
+            getbyid : function(id) {
+                return $http.get('/api/posts/' + id);
+            },
+            create : function(postData, upfile) {
+                return $http.post('/api/posts', postData, upfile);
+            },
+            update : function(id, postData) {
+                return $http.put('/api/posts/' + id, postData);
+            },
+            delete : function(id) {
+                return $http.delete('/api/posts/' + id);
+            }
+        }
+    }])
     korra.controller('PostController', ['$scope', '$mdToast', 'Upload', 'Posts', '$mdSidenav', function ($scope, $mdToast, Upload, Posts, $mdSidenav) {
     console.log(screen.width)
 
