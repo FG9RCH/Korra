@@ -1,0 +1,25 @@
+<form ng-submit="login()">
+    <div class="loginBox md-whiteframe-z1" layout="column">
+        <md-content class="md-padding" layout="column">
+            <ng-md-icon ng-click="closeDialog()" class="right-align" layout-align="end start" style="fill: black;max-width: 25px;position: absolute;right: 12px;" icon="clear" ></ng-md-icon>
+            <md-button href="/auth/facebook" class="fbLogin"><ng-md-icon layout-align="center center" style="fill:white;position: absolute;top: 3px;left: 10px;" icon="facebook" size="28">
+            </ng-md-icon> <span class="fbButtonText">Continue with Facebook</span> </md-button>
+            <p class="fbdisclaimer center">No posts without your permission.</p>
+            <p class="sign-up-with-email divider"><span class="divider-line ng-binding">Or log in with email</span></p>
+            <md-input-container class="loginInput">
+                <label>Username</label>
+                <input type="text" ng-model="username">
+            </md-input-container>
+            <md-input-container class="loginInput">
+                <label>Password</label>
+                <input type="password" ng-model="password">
+            </md-input-container>
+            <div layout="row" layout-align="center center" style="padding-top:20px;">
+                <md-button type="submit" class="md-raised md-primary">Login</md-button>
+                <div flex></div>
+                <md-button href="" md-no-ink>Forgot Password </md-button>
+            </div>
+        </md-content>
+
+    </div>
+</form>

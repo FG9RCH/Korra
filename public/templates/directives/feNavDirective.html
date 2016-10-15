@@ -1,0 +1,58 @@
+<nav class="white" role="navigation" >
+    <div class="nav-wrapper container"  flex="">
+        <div class="headercontent">
+            <div class="headercontent-left">
+                <a id="logo-container" href="#" class="brand-logo">INDIEGOGO</a>
+            </div>
+            <div class="headercontent-right">
+                <ul id="logo-container" id="modalContainer"  class="right hide-on-med-and-down ">
+                    <li><a class=" headercampaignbtn waves-effect waves-light default-primary-color btn">Start Campaign</a></li>
+                    <li ng-if="!user.local"><a ng-click="showSignup($event)" class="btn-flat header-modal">Sign Up</a></li>
+                    <li ng-if="!user.local"><a ng-click="showLogin($event)" class="btn-flat header-modal">Log In</a></li>
+                    <li ng-if="user.local"><md-menu md-position-mode="target-right bottom">
+                        <a ng-click="openMenu($mdOpenMenu, $event)" class="btn-flat header-modal">
+                            {{ user.local.firstName}}
+                        </a>
+                        <md-menu-content class="userdropdown" width="2">
+                            <md-menu-item>
+                                <md-button class="dropdownbtn" ng-click="">
+                                    My Campaigns
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-divider></md-menu-divider>
+                            <md-menu-item>
+                                <md-button class="dropdownbtn" ng-click="">
+                                    My Contributions
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-divider></md-menu-divider>
+                            <md-menu-item>
+                                <md-button class="dropdownbtn" ng-click="">
+                                    My Profile
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-divider></md-menu-divider>
+                            <md-menu-item>
+                                <md-button class="dropdownbtn" ng-click="">
+                                    My Setttings
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-divider></md-menu-divider>
+                            <md-menu-item>
+                                <md-button class="dropdownbtn" ng-click="">
+                                    Log Out
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-divider></md-menu-divider>
+                        </md-menu-content>
+                    </md-menu></li>
+                </ul>
+            </div>
+
+            <ul id="nav-mobile" class="side-nav" style="left: -250px;">
+                <li><a href="#">Navbar Link</a></li>
+            </ul>
+            <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+        </div>
+    </div>
+</nav>

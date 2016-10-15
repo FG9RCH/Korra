@@ -96,7 +96,7 @@ ul.side-nav.fixed:hover {
 
 #logo-container {
     height: 57px;
-    margin-bottom: 32px; }
+    margin-bottom: 12px; }
 
 nav.top-nav {
     height: 122px;
@@ -118,6 +118,11 @@ a.button-collapse.top-nav {
     z-index: 2; }
 a.button-collapse.top-nav.full {
     line-height: 122px; }
+
+.headercampaignbtn{
+    max-height: 32px;
+    margin-bottom: 5px;
+}
 
 @media only screen and (max-width : 600px) {
     a.button-collapse.top-nav {
@@ -627,18 +632,10 @@ body.parallax-demo footer {
 #tx-live-lang-container .txlive-langselector-marker {
     border-bottom: 4px solid rgba(0, 0, 0, 0.61); }
 
-.row .col.l3 {
-    width: 24%;
-    margin-left: 0;
-}
 
-.row .col.l4 {
-    width: 32.33333%;
-    margin-left: 0;
-}
 
 nav .brand-logo {
-    position: absolute;
+    position: relative;
     color: #673AB7;
     display: inline-block;
     font-size: 2.2rem;
@@ -831,6 +828,7 @@ i.small {
 .fullDiscat-icon, .fullDiscat-title {
     z-index: 10;
     position: relative;
+    margin: 0px auto;
 }
 
 
@@ -854,7 +852,7 @@ i.small {
     -moz-justify-content: center;
     -ms-justify-content: center;
     justify-content: center;
-    min-height: 111px;
+    min-height: 111px !important;
     margin-bottom: 10px;
     position: relative;
     background-size: cover;
@@ -1483,8 +1481,8 @@ nav {
     color: #fff;
     background-color: transparent !important;
     width: 100%;
-    height: 56px;
-    line-height: 56px;
+    height: 72px;
+    line-height: 72px;
 }
 
 .cImg{
@@ -1512,3 +1510,100 @@ span.acbtns {
     padding: 0 15px;
 }
 
+.md-dialog-container{
+   top: -1939px !important;
+}
+
+/* login */
+md-input-container.loginInput {
+    margin: 0px !important;
+}
+
+
+.dialogdemoBasicUsage #popupContainer {
+    position: relative; }
+
+a.fbLogin.md-button.md-ink-ripple {
+    background-color: #405d9d;
+    color: #ffffff;
+    margin: 80px 0 0 0;
+}
+
+.i-modal .modal-content.auth-modal .divider {
+    text-align: center;
+    position: relative;
+}
+.i-modal .sign-up-with-email {
+    color: #a8a8a8;
+}
+
+.divider .divider-line {
+    display: inline-block;
+}
+
+span.fbButtonText {
+    font-family: "Benton Sans","Helvetica","sans-serif";
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 14px;
+    text-transform: uppercase;
+    margin-left: 20px;
+}
+
+.fbdisclaimer {
+    font-size: smaller;
+    margin-bottom: 30px;
+}
+
+.loginBox.md-whiteframe-z1.layout-column {
+    min-width: 300px;
+}
+
+.headercontent{
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1440px;
+    height: 72px;
+    padding: 18px 10px;
+    display: box;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: -ms-flex;
+    display: flex;
+    box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -moz-align-items: center;
+    -ms-align-items: center;
+    align-items: center;
+    box-pack: justify;
+    -ms-flex-pack: justify;
+    -webkit-justify-content: space-between;
+    -moz-justify-content: space-between;
+    -ms-justify-content: space-between;
+    justify-content: space-between;
+}
+
+.headercontent-left {
+    display: box;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: -ms-flex;
+    display: flex;
+    box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -moz-align-items: center;
+    -ms-align-items: center;
+    align-items: center;
+}
+md-menu-content.userdropdown {
+    margin: 0px;
+    padding-bottom: 0px;
+}
+
+button.dropdownbtn.md-button.md-ink-ripple {
+    font-weight: 500;
+}

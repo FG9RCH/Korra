@@ -1,7 +1,7 @@
 /**
  * Created by Frank on 3/10/2016.
  */
-    var korra = angular.module('Korra', ['ngMaterial', 'ui.router',  'ngFileUpload', 'ngMdIcons', 'angularCSS'])
+    var korra = angular.module('Korra', ['ngMaterial', 'ui.router',  'ngFileUpload', 'ngMdIcons', 'angularCSS', 'matchMedia'])
 
     //---------------
     // Routes
@@ -116,8 +116,27 @@
 
                 // Not Authenticated
                 else {
-                    $rootScope.message = 'You need to log in.';
-                    //$timeout(function(){deferred.reject();}, 0);
+                    $scope.toastPosition = {
+                        bottom: false,
+                        top: true,
+                        left: false,
+                        right: true
+                    };
+                    $scope.getToastPosition = function() {
+                        return Object.keys($scope.toastPosition)
+                            .filter(function(pos) { return $scope.toastPosition[pos]; })
+                            .join(' ');
+                    };
+                    $scope.showauthError = function(message) {
+                        $mdToast.show(
+                            $mdToast.simple()
+                                .content(message)
+                                .position($scope.getToastPosition())
+                                .hideDelay(3000)
+                        );
+                    };
+                    $scope.showauthError('You need to log in.') ;
+                    $timeout(function(){deferred.reject();}, 0);
 
                     $location.url('/login');
                     deferred.reject();
@@ -173,25 +192,28 @@
                     loggedin: checkLoggedin
                 }
             })
-            .state('public', {
-                url: '/public',
-                templateUrl: '/templates/public/admin/admin.html',
-                css: '/templates/public/admin/CrowdFundMe.css',
-                resolve: {
-                    loggedin: checkLoggedin
-                }
-
+            .state('home', {
+                url: '/home',
+                templateUrl: '/templates/public/themes/crowdfundme/home/views/home.html',
+                css: '/templates/public/themes/crowdfundme/home/css/CrowdFundMe.css',
+                controller: 'BodyController'
             })
             .state('login', {
                 url: '/login',
-                templateUrl: '/templates/public/login/login.html',
-                css: [ '/templates/public/login/reset.css', '/templates/public/login/login.css'],
+                templateUrl: '/templates/public/themes/crowdfundme/login/login.html',
+                css: [ '/templates/public/themes/crowdfundme/login/reset.css', '/templates/public/themes/crowdfundme/login/login.css'],
                 controller: 'LoginCtrl'
+            })
+            .state('login-modal', {
+                url: '/login-modal',
+                templateUrl: '/templates/public/themes/crowdfundme/login/login-modal.html',
+                css: [ '/templates/public/themes/crowdfundme/login/reset.css', '/templates/public/themes/crowdfundme/login/login.css'],
+                controller: 'BodyController'
             })
             .state('profile', {
                 url: '/profile',
-                templateUrl: '/templates/public/profile/profile.html',
-                css: '/templates/public/profile/profile.css',
+                templateUrl: '/templates/public/themes/crowdfundme/profile/profile.html',
+                css: '/templates/public/themes/crowdfundme/profile/profile.css',
                 controller: 'ProfileCtrl',
                 resolve: {
                     loggedin: checkLoggedin
@@ -212,14 +234,13 @@
                 css: '/templates/public/signup/signup.css',
                 controller: 'LoginCtrl'
         })
-
             .state('landing', {
                 url: '/landing',
                 templateUrl: '/templates/public/landing/landing.html',
                 css: '/templates/public/landing/landing.css',
             });
 
-        $urlRouterProvider.otherwise('/login');
+        $urlRouterProvider.otherwise('/home');
 
        
     }])
@@ -241,9 +262,6 @@
             }
         }
     }])
-
-
-
     //---------------
     // Directives
     //---------------
@@ -251,6 +269,18 @@
         return {
             restrict: 'A',
             templateUrl: './templates/directives/navDirective.html'
+        }
+    })
+    .directive('feNavDirective', function(){
+        return {
+            restrict: 'A',
+            templateUrl: './templates/directives/feNavDirective.html'
+        }
+    })
+    .directive('feJcarousel', function(){
+        return {
+            restrict: 'A',
+            templateUrl: './templates/directives/feJcarousel.html'
         }
     })
     .directive('ngFiles', ['$parse', function ($parse) {
@@ -280,13 +310,11 @@
         Users.get()
             .success(function(data){
                 $scope.users = data;
-                console.log($scope.users);
             })
 
         Users.loggedin()
             .success(function(data){
                 $scope.currentUser = data;
-                console.log($scope.currentUser);
                 $scope.data = {
                     title: 'Korra',
                     toolbar: {
@@ -472,7 +500,7 @@
 
     }])
 
-    .controller('LoginCtrl', ['$scope', 'Users', '$http', '$mdToast', '$state', function($scope, Users, $http, $mdToast, $state){
+    .controller('LoginCtrl', ['$scope', 'Users', '$mdToast ', '$http',  '$state', function($scope, Users, $mdToast, $http,  $state){
         $('.toggle').on('click', function() {
             $('.container').stop().addClass('active');
         });
@@ -554,27 +582,7 @@
                     console.log(data);
                 });
         }
-        $scope.signup = function() {
 
-            var signupData = {
-
-                    username  : this.username,
-                    password  : this.password,
-                    email     : this.email,
-                    firstName : this.firstName,
-                    lastName  : this.lastName
-                };
-            console.log(signupData);
-            Users.signup(signupData)
-
-                .success(function(data){
-                    console.log(data);
-                    $state.go('admin.home')
-                })
-                .error(function(data) {
-                    console.log('Error: ' + data);
-                });
-        }
 
     }])
     .controller('ProfileCtrl', ['$scope', 'Users', '$state', '$http', function($scope, Users, $state, $http){
@@ -605,4 +613,274 @@
         $scope.closeToast = function() {
             $mdToast.hide();
             };
+        })
+    .controller('BodyController', ["$scope", 'Users', '$state',  'screenSize', '$mdToast', '$mdDialog', function ($scope, Users, $state, screenSize, $mdToast, $mdDialog) {
+      /*  $(document).ready(function(){
+        $('.button-collapse').sideNav('show')
+        // Hide sideNav
+        $('.button-collapse').sideNav('hide')
+
+        $('select').material_select();
+    })*/
+        var originatorEv;
+
+        $scope.openMenu = function($mdOpenMenu, ev) {
+            originatorEv = ev;
+            $mdOpenMenu(ev);
+        };
+        Users.loggedin()
+                .success(function(data){
+                    $scope.user = data
+                    console.log(data)
+
+                })
+                .error(function(err){
+                    console.log(err);
+                })
+
+        $scope.toastPosition = {
+            bottom: true,
+            top: false,
+            left: false,
+            right: true
+        };
+
+        $scope.getToastPosition = function() {
+            return Object.keys($scope.toastPosition)
+                .filter(function(pos) { return $scope.toastPosition[pos]; })
+                .join(' ');
+        };
+        $scope.showSuccess = function(message) {
+            $mdToast.show(
+                $mdToast.simple()
+                    .content(message)
+                    .position($scope.getToastPosition())
+                    .hideDelay(3000)
+            );
+        };
+        $scope.showError = function(message) {
+            $mdToast.show(
+                $mdToast.simple()
+                    .content(message)
+                    .position($scope.getToastPosition())
+                    .hideDelay(3000)
+            );
+        };
+        $scope.showLogin = function(ev) {
+            // Appending dialog to document.body to cover sidenav in docs app
+            // Modal dialogs should fully cover application
+            // to prevent interaction outside of dialog
+            $mdDialog.show({
+                parent: angular.element(document.querySelector('#popupContainer')),
+                clickOutsideToClose: true,
+                autoWrap: true,
+                templateUrl: './templates/public/themes/crowdfundme/login/login-modal.html',
+                controller: 'BodyController',
+                ariaLabel: 'Alert Dialog Demo',
+                ok: 'Got it!',
+                targetEvent: ev
         });
+        };
+        $scope.showSignup = function(ev) {
+            // Appending dialog to document.body to cover sidenav in docs app
+            // Modal dialogs should fully cover application
+            // to prevent interaction outside of dialog
+            $mdDialog.show({
+                parent: angular.element(document.querySelector('#modalContainer')),
+                clickOutsideToClose: true,
+                autoWrap: true,
+                templateUrl: './templates/public/themes/crowdfundme/signup/signup-modal.html',
+                controller: 'BodyController',
+                ariaLabel: 'Sign up',
+                ok: 'Got it!',
+                targetEvent: ev
+            });
+        };
+        $scope.closeDialog = function() {
+            $mdDialog.hide();
+        };
+        $scope.signup = function() {
+
+            var signupData = {
+
+                username  : this.username,
+                password  : this.password,
+                email     : this.email,
+                firstName : this.firstName,
+                lastName  : this.lastName
+            };
+            console.log(signupData);
+            Users.signup(signupData)
+
+                .success(function(data){
+                    $scope.success = data;
+                    $scope.showSuccess($scope.success.message);
+                    $scope.closeDialog();
+                    $('.jcarousel').jcarousel('destroy');
+                    console.log($scope.success.message);
+                    $state.go('home')
+                })
+                .error(function(data) {
+                    console.log('Error: ' + data);
+                });
+        };
+
+
+        $scope.login = function() {
+            var loginData = {
+                username : this.username,
+                password : this.password
+            }
+
+            Users.login(loginData)
+                .success(function(data) {
+                    $scope.success = data;
+                    $scope.showSuccess($scope.success.message);
+                    $scope.closeDialog();
+                    $('.jcarousel').jcarousel('destroy');
+                    console.log($scope.success.message);
+                    $state.reload('home')
+
+                })
+                .error(function(err){
+                    $scope.showError(err.message);
+                    console.log(err.message)
+                })
+        };
+        $(document).ready(function(){
+            $('ul.indieTabs').tabs();
+        });
+
+    /*
+     Carousel initialization
+     */
+    $('.jcarousel')
+        .jcarousel({
+            wrap: 'circular',
+            center: true
+        });
+
+    $('.jcarousel').jcarouselAutoscroll({
+        interval: 9000,
+        target: '+=1',
+        autostart: true
+    });
+
+    /*
+     Prev control initialization
+     */
+    $('.jcarousel-control-prev')
+        .on('jcarouselcontrol:active', function() {
+            $(this).removeClass('inactive');
+        })
+        .on('jcarouselcontrol:inactive', function() {
+            $(this).addClass('inactive');
+        })
+        .jcarouselControl({
+            // Options go here
+            target: '-=1'
+        });
+
+    /*
+     Next control initialization
+     */
+    $('.jcarousel-control-next')
+        .on('jcarouselcontrol:active', function() {
+            $(this).removeClass('inactive');
+        })
+        .on('jcarouselcontrol:inactive', function() {
+            $(this).addClass('inactive');
+        })
+        .jcarouselControl({
+            // Options go here
+            target: '+=1'
+        });
+
+    /*
+     Pagination initialization
+     */
+    $('.jcarousel-pagination')
+        .on('jcarouselpagination:active', 'a', function() {
+            $(this).addClass('active');
+        })
+        .on('jcarouselpagination:inactive', 'a', function() {
+            $(this).removeClass('active');
+        })
+        .jcarouselPagination({
+            // Options go here
+        });
+
+
+    $scope.desktop = screenSize.on('md, lg', function (match) {
+        $scope.desktop = match;
+    });
+    $scope.mobile = screenSize.on('xs, sm', function (match) {
+        $scope.mobile = match;
+    });
+
+
+    $scope.select = {
+        value1: "Option1",
+        value2: "I'm an option",
+        choices: ["Option1", "I'm an option", "This is materialize", "No, this is Patrick."]
+    };
+
+    $scope.dummyInputs = {};
+
+}])
+    .controller('CollapsibleController', ["$scope", function ($scope) {
+        $scope.collapsibleElements = [{
+            icon: 'mdi-image-filter-drama',
+            title: 'First',
+            content: 'Lorem ipsum dolor sit amet.'
+        },{
+            icon: 'mdi-maps-place',
+            title: 'Second',
+            content: 'Lorem ipsum dolor sit amet.'
+        },{
+            icon: 'mdi-social-whatshot',
+            title: 'Third',
+            content: 'Lorem ipsum dolor sit amet.'
+        }];
+    }]).controller('ToastController', ["$scope", function ($scope) {
+        $scope.callback = function(message) {
+            alert(message);
+        };
+    }]).controller('PaginationController', ["$scope", function ($scope) {
+        $scope.changePage = function (page) {
+            Materialize.toast("Changed to page " + page, 1000);
+        }
+    }])
+    .controller('DateController', ["$scope", function ($scope) {
+        var currentTime = new Date();
+        $scope.currentTime = currentTime;
+        $scope.month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $scope.monthShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $scope.weekdaysFull = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        $scope.weekdaysLetter = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+        $scope.disable = [false, 1, 7];
+        $scope.today = 'Today';
+        $scope.clear = 'Clear';
+        $scope.close = 'Close';
+        var days = 15;
+        $scope.minDate = (new Date($scope.currentTime.getTime() - ( 1000 * 60 * 60 *24 * days ))).toISOString();
+        $scope.maxDate = (new Date($scope.currentTime.getTime() + ( 1000 * 60 * 60 *24 * days ))).toISOString();
+        $scope.onStart = function () {
+            console.log('onStart');
+        };
+        $scope.onRender = function () {
+            console.log('onRender');
+        };
+        $scope.onOpen = function () {
+            console.log('onOpen');
+        };
+        $scope.onClose = function () {
+            console.log('onClose');
+        };
+        $scope.onSet = function () {
+            console.log('onSet');
+        };
+        $scope.onStop = function () {
+            console.log('onStop');
+        };
+    }]);

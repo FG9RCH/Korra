@@ -143,13 +143,13 @@ module.exports = function (app, passport) {
   // Campaigns ---------------------------------------------------------------------
 
   // get all campaigns
-  app.get('/api/campaigns', function (req, res) {
+  app.get('/api/campaigns', auth,  function (req, res) {
     // use mongoose to get all campaigns in the database
     getCampaigns(res);
   });
 
   // get campaign by id
-  app.get('/api/campaigns/:campaign_id', function (req, res) {
+  app.get('/api/campaigns/:campaign_id', auth,  function (req, res) {
     Campaign.findOne({
       _id: req.params.campaign_id
     }, function (err, campaign) {
@@ -161,7 +161,7 @@ module.exports = function (app, passport) {
   });
 
   // create campaign and send back all campaigns after creation
-  app.post('/api/campaigns', multer({ storage: storage }).single('file'), function (req, res) {
+  app.post('/api/campaigns', auth,  multer({ storage: storage }).single('file'), function (req, res) {
 
     // create a campaign, information comes from AJAX request from Angular
     Campaign.create({
@@ -179,7 +179,7 @@ module.exports = function (app, passport) {
   });
 
   // update a campaign
-  app.put('/api/campaigns/:campaign_id', multer({ storage: storage }).single('file'), function (req, res) {
+  app.put('/api/campaigns/:campaign_id', auth,  multer({ storage: storage }).single('file'), function (req, res) {
 
     if (req.file){
       Campaign.findByIdAndUpdate(req.params.campaign_id, {
@@ -209,7 +209,7 @@ module.exports = function (app, passport) {
   });
 
   // delete a campaign
-  app.delete('/api/campaigns/:campaign_id', function (req, res) {
+  app.delete('/api/campaigns/:campaign_id', auth,  function (req, res) {
     Campaign.remove({
       _id: req.params.campaign_id
     }, function (err, campaign) {
@@ -223,13 +223,13 @@ module.exports = function (app, passport) {
   // Posts ---------------------------------------------------------------------
 
   // get all posts
-  app.get('/api/posts', function (req, res) {
+  app.get('/api/posts', auth,  function (req, res) {
     // use mongoose to get all posts in the database
     getPosts(res);
   });
 
   // get post by id
-  app.get('/api/posts/:post_id', function (req, res) {
+  app.get('/api/posts/:post_id', auth,  function (req, res) {
     Post.findOne({
       _id: req.params.post_id
     }, function (err, post) {
@@ -241,7 +241,7 @@ module.exports = function (app, passport) {
   });
 
   // create post and send back all posts after creation
-  app.post('/api/posts', multer({ storage: storage }).single('file'), function (req, res) {
+  app.post('/api/posts', auth,  multer({ storage: storage }).single('file'), function (req, res) {
 
     // create a post, information comes from AJAX request from Angular
     Post.create({
@@ -258,7 +258,7 @@ module.exports = function (app, passport) {
   });
 
   // update a post
-  app.put('/api/posts/:post_id', multer({ storage: storage }).single('file'), function (req, res) {
+  app.put('/api/posts/:post_id', auth,  multer({ storage: storage }).single('file'), function (req, res) {
 
     if (req.file){
       Post.findByIdAndUpdate(req.params.post_id, {
@@ -288,7 +288,7 @@ module.exports = function (app, passport) {
   });
 
   // delete a post
-  app.delete('/api/posts/:post_id', function (req, res) {
+  app.delete('/api/posts/:post_id', auth,  function (req, res) {
     Post.remove({
       _id: req.params.post_id
     }, function (err, post) {
