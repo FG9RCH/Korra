@@ -1510,10 +1510,6 @@ span.acbtns {
     padding: 0 15px;
 }
 
-.md-dialog-container{
-   top: -1939px !important;
-}
-
 /* login */
 md-input-container.loginInput {
     margin: 0px !important;
