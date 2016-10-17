@@ -1,7 +1,7 @@
 /**
  * Created by Frank on 3/10/2016.
  */
-    var korra = angular.module('Korra', ['ngMaterial', 'ui.router',  'ngFileUpload', 'ngMdIcons', 'angularCSS', 'matchMedia'])
+    var korra = angular.module('Korra', ['ngMaterial', 'ui.router', 'ngAnimate',  'ngFileUpload', 'ngMdIcons', 'angularCSS', 'matchMedia'])
 
     //---------------
     // Routes
@@ -116,26 +116,7 @@
 
                 // Not Authenticated
                 else {
-                    $scope.toastPosition = {
-                        bottom: false,
-                        top: true,
-                        left: false,
-                        right: true
-                    };
-                    $scope.getToastPosition = function() {
-                        return Object.keys($scope.toastPosition)
-                            .filter(function(pos) { return $scope.toastPosition[pos]; })
-                            .join(' ');
-                    };
-                    $scope.showauthError = function(message) {
-                        $mdToast.show(
-                            $mdToast.simple()
-                                .content(message)
-                                .position($scope.getToastPosition())
-                                .hideDelay(3000)
-                        );
-                    };
-                    $scope.showauthError('You need to log in.') ;
+
                     $timeout(function(){deferred.reject();}, 0);
 
                     $location.url('/login');
@@ -277,12 +258,22 @@
             templateUrl: './templates/directives/feNavDirective.html'
         }
     })
-    .directive('feJcarousel', function(){
+    .directive('feCategories', function(){
         return {
             restrict: 'A',
-            templateUrl: './templates/directives/feJcarousel.html'
+            templateUrl: './templates/directives/feCategories.html',
+            controller: 'BodyController'
         }
     })
+    .directive('indieTabs', function(){
+        return {
+            restrict: 'A',
+            templateUrl: './templates/directives/indieTabs.html',
+            controller: 'BodyController'
+        }
+    })
+
+
     .directive('ngFiles', ['$parse', function ($parse) {
 
         function fn_link(scope, element, attrs) {
@@ -630,21 +621,22 @@
         };
         Users.loggedin()
                 .success(function(data){
-                    $scope.user = data
-                    console.log(data)
-
+                    $scope.user = data;
+                    console.log(data);
+                    var adjustSlider = function(){
+                        document.getElementById('carouselul').style.left = '2177px'
+                    };
+                    adjustSlider();
                 })
                 .error(function(err){
                     console.log(err);
-                })
-
+                });
         $scope.toastPosition = {
             bottom: true,
             top: false,
             left: false,
             right: true
         };
-
         $scope.getToastPosition = function() {
             return Object.keys($scope.toastPosition)
                 .filter(function(pos) { return $scope.toastPosition[pos]; })
@@ -666,19 +658,21 @@
                     .hideDelay(3000)
             );
         };
-        $scope.showLogin = function(ev) {
+        $scope.showLogin = function() {
             // Appending dialog to document.body to cover sidenav in docs app
             // Modal dialogs should fully cover application
             // to prevent interaction outside of dialog
+            var elementWrapper = {};
+            elementWrapper.target = document.getElementById('#modalContainer');
             $mdDialog.show({
-                parent: angular.element(document.querySelector('#popupContainer')),
+                parent: angular.element(document.querySelector('#modalContainer')),
                 clickOutsideToClose: true,
                 autoWrap: true,
                 templateUrl: './templates/public/themes/crowdfundme/login/login-modal.html',
                 controller: 'BodyController',
                 ariaLabel: 'Alert Dialog Demo',
                 ok: 'Got it!',
-                targetEvent: ev
+                targetEvent: elementWrapper
         });
         };
         $scope.showSignup = function(ev) {
@@ -724,8 +718,6 @@
                     console.log('Error: ' + data);
                 });
         };
-
-
         $scope.login = function() {
             var loginData = {
                 username : this.username,
@@ -755,15 +747,26 @@
      Carousel initialization
      */
     $('.jcarousel')
+        .on('jcarousel:targetin', 'li', function() {
+            $(this).addClass('showCaption');
+        })
+        .on('jcarousel:targetout', 'li', function() {
+            $(this).removeClass('showCaption');
+        })
+        .on('jcarousel:createend', function() {
+
+
+
+        })
         .jcarousel({
             wrap: 'circular',
             center: true
         });
 
     $('.jcarousel').jcarouselAutoscroll({
-        interval: 9000,
+        interval: 5000,
         target: '+=1',
-        autostart: true
+
     });
 
     /*

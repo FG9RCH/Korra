@@ -1,0 +1,64 @@
+
+<div class="container" ng-controller="SlideDetailCtrl">
+    <div class="col s12">
+        <h1 class="md-display-3 headerH1 flow-text center-align">Edit Slide</h1>
+    </div>
+
+    <div class="row">
+        <form enctype="multipart/form-data" name="editSlideForm" ng-submit="editSlide(file)" novalidate>
+
+            <div class="col s12 m12 l9">
+                <div class="row">
+                    <md-input-container>
+                        <label>Title</label>
+                        <input name="title" class="" type="text" id="title"
+                               ng-model="slider.title">
+                    </md-input-container>
+                </div>
+                <div class="row">
+                    <md-input-container>
+                        <label>Description</label>
+                        <textarea name="description" rows="8" class="materialize-textarea" type="text" id="description"
+                                  ng-model="slider.description"></textarea>
+                    </md-input-container>
+                </div>
+                <div class="row">
+                </div>
+                    <div class="file-field input-field col s6 valign-wrapper">
+                        <md-button class="btn addSubmit" ng-files="getTheFiles($files)" ngf-select ng-model="file" name="file" ngf-pattern="'image/*'"
+                             ngf-accept="'image/*'" ngf-max-size="20MB" >file
+                        </md-button>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <span class="addImgText">Image Preview:</span>
+                    </div>
+                    <div class="file-path-wrapper col s6">
+                        <img style="max-width: 250px"  ng-src='uploads/{{slider.imgPath}}'>
+                    </div>
+
+
+
+            </div>
+
+
+
+            <div class="col s12 m12 l3">
+                    <div class="card">
+                            <span class="editSlideCredateText valign">Created on : {{ slider.createdAt | date:'MM/dd/yyyy @ h:mma' }}</span>
+                            <br>
+                            <span class="editSlideCredateText valign">Updated on : {{ slider.updatedAt | date:'MM/dd/yyyy @ h:mma'}}</span>
+
+                        <br>
+                        <div class="" >
+                            <div class="valign center-align">
+                                <md-button type="submit" class="md-raised md-primary  white-text left-align waves-ripple md-button md-ink-ripple"><span class="acbtns">Submit</span></md-button>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </form>
+    </div>
+</div>

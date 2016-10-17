@@ -2,16 +2,16 @@
     <div class="nav-wrapper container"  flex="">
         <div class="headercontent">
             <div class="headercontent-left">
-                <a id="logo-container" href="#" class="brand-logo">INDIEGOGO</a>
+                <a id="logo-container" href="#" class="brand-logo">BooJue</a>
             </div>
             <div class="headercontent-right">
                 <ul id="logo-container" id="modalContainer"  class="right hide-on-med-and-down ">
                     <li><a class=" headercampaignbtn waves-effect waves-light default-primary-color btn">Start Campaign</a></li>
-                    <li ng-if="!user.local"><a ng-click="showSignup($event)" class="btn-flat header-modal">Sign Up</a></li>
-                    <li ng-if="!user.local"><a ng-click="showLogin($event)" class="btn-flat header-modal">Log In</a></li>
-                    <li ng-if="user.local"><md-menu md-position-mode="target-right bottom">
+                    <li ng-if="!user.local && !user.facebook"><a ng-click="showSignup($event)" class="btn-flat header-modal">Sign Up</a></li>
+                    <li ng-if="!user.local && !user.facebook"><a ng-click="showLogin()" class="btn-flat header-modal">Log In</a></li>
+                    <li ng-if="user.local || user.facebook"><md-menu md-position-mode="target-right bottom">
                         <a ng-click="openMenu($mdOpenMenu, $event)" class="btn-flat header-modal">
-                            {{ user.local.firstName}}
+                            {{ user.local.firstName  || user.facebook.name }}
                         </a>
                         <md-menu-content class="userdropdown" width="2">
                             <md-menu-item>

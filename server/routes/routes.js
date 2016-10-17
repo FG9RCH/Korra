@@ -3,6 +3,7 @@ var Theme = require('../models/Theme.js');
 var Campaign = require('../models/Campaign.js');
 var User = require('../models/User.js');
 var Post = require('../models/Post.js');
+var Slider = require('../models/Slider.js')
 var crypto = require('crypto');
 var path = require('path');
 var multer = require('multer');
@@ -18,6 +19,17 @@ var storage = multer.diskStorage({
 });
 var passport = require('passport');
 
+function getSlider(res) {
+  Campaign.find(function (err, slider) {
+
+    // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+    if (err) {
+      res.send(err);
+    }
+
+    res.json(slider); // return all campaigns in JSON format
+  });
+};
 function getCampaigns(res) {
   Campaign.find(function (err, campaigns) {
 
@@ -63,7 +75,7 @@ module.exports = function (app, passport) {
 // route middleware to ensure user is logged in - ajax get
   var auth = function(req, res, next) {
     if (!req.isAuthenticated()) {
-      res.sendStatus(401);
+      res.status(401).redirect('/')
 
       // =============================================================================
     } else {
@@ -310,6 +322,85 @@ module.exports = function (app, passport) {
     })
   });
 
+  // Slider ---------------------------------------------------------------------
+
+  // get all posts
+  app.get('/api/slider', auth,  function (req, res) {
+    // use mongoose to get all posts in the database
+    getSlider(res);
+  });
+
+  // get post by id
+  app.get('/api/slider/:slide_id', auth,  function (req, res) {
+    Slider.findOne({
+      _id: req.params.post_id
+    }, function (err, post) {
+      if (err)
+        res.send(err);
+
+      res.json(post);
+    });
+  });
+
+  // create post and send back all posts after creation
+  app.post('/api/slider', auth,  multer({ storage: storage }).single('file'), function (req, res) {
+
+    // create a post, information comes from AJAX request from Angular
+    Slider.create({
+      title: req.body.title,
+      description: req.body.description,
+      imgPath: req.file.filename
+    }, function (err, slide) {
+      if (err)
+        res.send(err);
+      // get and return all the posts after you create another
+      getSlider(res);
+    });
+
+  });
+
+  // update a post
+  app.put('/api/slider/:slide_id', auth,  multer({ storage: storage }).single('file'), function (req, res) {
+
+    if (req.file){
+      Slider.findByIdAndUpdate(req.params.slide_id, {
+            $set: {
+              title: req.body.title,
+              description: req.body.description,
+              raised: req.body.raised,
+              imgPath: req.file.filename
+            }}, {upsert:true}, function (err, slide) {
+
+            return res.json(true);
+          }
+      );
+    }else {
+      Slider.findByIdAndUpdate(req.params.slide_id, {
+            $set: {
+              title: req.body.title,
+              description: req.body.description,
+              raised: req.body.raised,
+              imgPath: req.body.imgPath
+            }}, {upsert:true}, function (err, slide) {
+            console.log(req.body.imgPath)
+            return res.json(true);
+          }
+      );
+    }
+  });
+
+  // delete a post
+  app.delete('/api/slider/:slide_id', auth,  function (req, res) {
+    Slider.remove({
+      _id: req.params.slide_id
+    }, function (err, slide) {
+      if (err)
+        res.send(err);
+
+      getSlider(res);
+    });
+  });
+
 
   // Theme ==========================================================
   app.get('/api/themes', function(req, res){
@@ -343,7 +434,36 @@ module.exports = function (app, passport) {
 
 
   // Users =======================================================================
+  app.get('/api/users', auth, function(req, res) {
+    getUsers(res);
+  });
 
+  app.get('/api/users/:user_id', function (req, res) {
+    User.findOne({
+      _id: req.params.user_id
+    }, function (err, user) {
+      if (err)
+        res.send(err);
+
+      res.json(user);
+    });
+  });
+
+  app.post('/api/users/:user_id', function(req, res) {
+    User.findByIdAndUpdate(req.params.user_id, {
+      $set: {
+        name: req.body.name,
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password
+      }}, {upsert:true}, function (err, post) {
+      if(err)
+        throw err;
+
+      console.log(req.body)
+      return res.json(true);
+    })
+  });
 
 // normal routes ===============================================================
 
@@ -357,54 +477,6 @@ module.exports = function (app, passport) {
 // =============================================================================
 // AUTHENTICATE (FIRST LOGIN) ==================================================
 // =============================================================================
-
-  // locally --------------------------------
-  // LOGIN ===============================
-
-/*  // process the login form
-  app.post('/login', function(req, res, next) {
-    if (!req.body.email || !req.body.password) {
-      return res.json({ error: 'Email and Password required' });
-    }
-    passport.authenticate('login', function(err, user, info) {
-      if (err) {
-        return res.json(err);
-      }
-      if (user.error) {
-        return res.json({ error: user.error });
-      }
-      req.logIn(user, function(err) {
-        if (err) {
-          return res.json(err);
-        }
-        res.redirect( '/#/admin/campaigns' );
-      });
-    })(req, res);
-  });
-
-  // SIGNUP =================================
-
-  // process the signup form
-  app.post('/signup', function(req, res, next) {
-    console.log(req.body)
-    if (!req.body.email || !req.body.password) {
-      return res.json({ error: 'Email, Username, and Password required' });
-    }
-    passport.authenticate('signup', function(err, user, info) {
-      if (err) {
-        return res.json(err);
-      }
-      if (user.error) {
-        return res.json({ error: user.error });
-      }
-      req.logIn(user, function(err) {
-        if (err) {
-          return res.json(err);
-        }
-        res.send(user);
-      });
-    })(req, res);
-  });*/
 
   /* Handle Login POST */
   app.post('/api/login', function(req, res, next) {
@@ -425,8 +497,6 @@ module.exports = function (app, passport) {
     })(req, res, next);
 
   });
-
-
 
   /* Handle Registration POST */
   app.post('/api/signup',  function(req, res, next) {
@@ -450,7 +520,7 @@ module.exports = function (app, passport) {
   // handle the callback after facebook has authenticated the user
   app.get('/auth/facebook/callback',
       passport.authenticate('facebook', {
-        successRedirect : '/#/admin/campaigns',
+        successRedirect : '/#/home',
         failureRedirect : '/#/login'
       }));
 
@@ -589,37 +659,6 @@ module.exports = function (app, passport) {
     res.send(req.isAuthenticated() ? req.user : '0');
   });
 // =============================================================================
-  app.get('/api/users', auth, function(req, res) {
-    getUsers(res);
-  });
-
-  app.get('/api/users/:user_id', function (req, res) {
-    User.findOne({
-      _id: req.params.user_id
-    }, function (err, user) {
-      if (err)
-        res.send(err);
-
-      res.json(user);
-    });
-  });
-
-  app.post('/api/users/:user_id', function(req, res) {
-    User.findByIdAndUpdate(req.params.user_id, {
-      $set: {
-        name: req.body.name,
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password
-      }}, {upsert:true}, function (err, post) {
-      if(err)
-      throw err;
-
-      console.log(req.body)
-      return res.json(true);
-    })
-  });
-
 
 
   // show the admin page (will also have our login links)
